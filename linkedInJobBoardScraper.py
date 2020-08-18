@@ -6,7 +6,7 @@ from linkedInIndividualJobScraper import linkedInIndividualJobScraper
 from datetime import datetime
 
 
-def linkedInMetaSearch(URL):
+def linkedInMetaSearch(URL, jobs):
 
     headers = {"User-Agent": 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:73.0) Gecko/20100101 Firefox/73.0'}
 
@@ -29,15 +29,13 @@ def linkedInMetaSearch(URL):
 
     # print(listings[0].prettify())
 
-    
-
     for listing in listings:
 
         # print(listing)
 
         score = 1000
 
-        id = "li" + listing.get("data-id")
+        id = "li_" + listing.get("data-id")
         # print(jobID)
 
         # TODO check against a central list to make sure it's not a duplicate
@@ -45,8 +43,12 @@ def linkedInMetaSearch(URL):
         title = listing.find('h3', class_="job-result-card__title").contents[0]
         # print(jobTitle)
 
-        company = listing.find('a', class_="result-card__subtitle-link").contents[0]
-        # print(f"\n\n{company}\n\n")
+        try:
+            company = listing.find('a', class_="result-card__subtitle-link").contents[0]
+            # print(f"\n\n{company}\n\n")
+        except AttributeError as e:
+            company = None
+            print(f"{e} - No company name.")
 
         link = listing.find("a").get('href')
         # print(jobLink)
@@ -63,7 +65,7 @@ def linkedInMetaSearch(URL):
         #     # print(e + "\n")
         #     print(f"{e} - this is not Promoted.")
 
-        print(f"\nEvaluating {title} at {company}.")
+        print(f"\nEvaluating {title} at {company} ({id}).")
         # print(link)
 
         datetimePosted = datetime.strptime(datePosted, '%Y-%m-%d')
@@ -75,11 +77,11 @@ def linkedInMetaSearch(URL):
         ageReduction = ageInDays ** 2
         score -= ageReduction
         if ageReduction > 0:
-            print(f"... docking {ageReduction} from the score ({score}) because the listing is {ageInDays} days old.")
+            print(f"... {ageReduction} from the score ({score}) because the listing is {ageInDays} days old.")
         # age = (datetimePosted - datetime.now())
         # print(age)
 
-        linkedInIndividualJobScraper(title, link, score)
+        linkedInIndividualJobScraper(link, score)
 
         # print(soup.prettify())
         # print(listings[0].prettify())
@@ -88,4 +90,7 @@ def linkedInMetaSearch(URL):
 
         sleep(randint(1, 10))
 
-    return score, id, title, company, link, datePosted, location
+        jobs[id] = [score, id, title, company, link, datePosted, location]
+
+    # return score, id, title, company, link, datePosted, location
+    return jobs

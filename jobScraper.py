@@ -3,19 +3,59 @@ from bs4 import BeautifulSoup
 from time import sleep
 from random import randint
 from linkedInJobBoardScraper import linkedInMetaSearch
+import smtplib
+from credentials import USER, PASS, EMAIL
 
 
-searchPhrases = {'Lead Python Developer': 50, 'Lead Developer': 50, 'Architect': 50, 'Cloud Technical Solutions Engineer': 50,'Ruby on Rails Fullstack Engineer': 50, 'Ruby on Rails Developer': 50,
-'Mid-Senior level': 25, 'Solutions Engineer': 25,
-'Application Development': 10, 'Blockchain': 10, 'Crypto': 10, 'Quant': 10, 'ETL Developer': 10
+searchPhrases = {'Python': 50, 'Junior': 50, 'Jr.': 50, 'Jr': 50,
+
+'Flask': 25,
+
+'Portland': 10,
+
+'Lead Python Developer': -50, 'Lead Developer': -50, 'Lead Software Developer': -50, 'Architect': -50, 'Cloud Technical Solutions Engineer': -50,'Ruby on Rails Fullstack Engineer': -50, 'Ruby on Rails Developer': -50, 'Clearance': -50, 'Active SECRET': -50, '7+ years': -50, '5+ years': -50, 'Mid-Level': -50,
+
+'Mid-Senior level': -25, 'Solutions Engineer': -25, 'Data Engineer': -25, 'Data Science': -25, 'Talend': -25, 'ERP': -25, '4+ years': -25, 'Front End Developer': -25, 'Fintech': -25,
+
+'Application Development': -10, 'Blockchain': -10, 'Crypto': -10, 'Quant': -10, 'ETL Developer': -10, 'React': -10, 'React Native': -10, 'C++': -10, 'PHP': -10, 'Trading': -10, 'Hedge Fund': -10, 'Java': -10
 }
 
 listings = []
 
-linkedInURL = "https://www.linkedin.com/jobs/search/?f_TPR=r86400&geoId=103644278&keywords=python%20developer%20-senior%20-sr%20-mid-senior&location=United%20States%22"
+linkedInURL = "https://www.linkedin.com/jobs/search/?f_E=1%2C2%2C3&f_LF=f_AL&f_TPR=r86400&geoId=103644278&keywords=python%20developer%20-senior%20-sr%20-mid-senior&location=United%20States"
+# "https://www.linkedin.com/jobs/search/?f_TPR=r86400&geoId=103644278&keywords=python%20developer%20-senior%20-sr%20-mid-senior&location=United%20States%22"
 # https://www.linkedin.com/jobs/search/?f_LF=f_AL&geoId=103644278&keywords=python%20developer%20-senior%20-sr%20-mid-senior&location=United%20States"
 
-listings.append(linkedInMetaSearch(linkedInURL, jobs))
+# listings.append(linkedInMetaSearch(linkedInURL, jobs))
+
+jobs = {}
+linkedInMetaSearch(linkedInURL, jobs)
+
+def sendEMail():
+    server = smtplib.SMTP("smtp.gmail.com", 587)
+    server.ehlo()
+    server.starttls()
+    server.ehlo()
+
+    server.login(USER, PASS)
+
+    subject = f"Job Scraper Results"
+    # body = "Check B&HPhoto"
+
+    body = ""
+    jobIDs = [jobs[x] for x in sorted(jobs.keys(), key = lambda x: jobs[x][0], reverse = True)][:10]
+    for jobID in jobIDs:
+
+        # body += f"({jobID[0]}) <a href='{jobID[4]}'>{jobID[2]}</a> at {jobID[3]} in {jobID[6]} posted {jobID[5]} ({jobID[1]})\n"
+        body += f"({jobID[0]}) {jobID[2]} at {jobID[3]} in {jobID[6]} posted {jobID[5]} ({jobID[1]})\n{jobID[4]}\n"
+        # [score, id, title, company, link, datePosted, location]
+    msg = f"Subject: {subject}\n\n{body}"
+    
+
+    server.sendmail(EMAIL, EMAIL, msg)
+    print("E-mail has been sent.")
+
+    server.quit()
 
 # class Job:
 #     def __init__(self, score, title, applicationDate, datePosted, location):
@@ -32,31 +72,48 @@ listings.append(linkedInMetaSearch(linkedInURL, jobs))
 # print(li_123.location)
 
 
-for listing in listings:
+for job in jobs.keys():
     # print(f"{listing[2] = } {listing[1] = } {listing[3] = }")
-    score, title = listing[0], listing[2]
+    score, title = jobs[job][0], jobs[job][2]
     for searchPhrase in searchPhrases.keys():
         if searchPhrase in title:
             dockingValue = 2 * searchPhrases[searchPhrase]
-            score -= dockingValue
+            score += dockingValue
             print(f"... docking {dockingValue} points for {searchPhrase} being in {title}")
 
 #     # TODO if searchPhrase in jobDescription
 
-    listing = list(listing)
-    listing[0] = score
+    # listing = list(listing)
+    jobs[job][0] = score
 
 print('\n')
-print(listings)
 
-print('\n')
-listings.sort(key = lambda listing: listing[0], reverse = True)
-print(listings)
+# for job in sorted(jobs.items(), key=lambda x: x[1][0], reverse = True):
+#     print(job)
 
-print('\n')
-for listing in listings:#[:10]:
-    score, id, title, company, link, datePosted, location = listing[0], listing[1], listing[2], listing[3], listing[4], listing[5], listing[6]
-    print(f"{score} - <a href='{link}'>{title}</a> at {company} in {location}")
+# print(jobs)
+# print("\n" * 5)
+
+# jobIDs = [jobs[x] for x in sorted(jobs.keys(), key = lambda x: jobs[x][0], reverse = True)][:10]
+# print(jobIDs)
+
+sendEMail()
+
+# print(key, value) for (key, value) in sorted(orders.items(), key=lambda x: x[1]
+
+# for jobID in jobIDs:
+#     print(f"({jobs[jobID][0]}) <a href='{jobs[jobID][4]}'>{jobs[jobID][2]}</a> at {jobs[jobID][3]} in {jobs[jobID][6]} posted {jobs[jobID][5]} ({jobs[jobID][1]}")
+
+# print(listings)
+
+# print('\n')
+# jobs.sort(key = lambda listing: listing[0], reverse = True)
+# print(listings)
+
+# print('\n')
+# for listing in listings:#[:10]:
+#     score, id, title, company, link, datePosted, location = listing[0], listing[1], listing[2], listing[3], listing[4], listing[5], listing[6]
+#     print(f"{score} - <a href='{link}'>{title}</a> at {company} in {location}")
 
 
 #     # location = listing.find("span",  class_="job-result-card__location").contents[0]
@@ -77,4 +134,3 @@ for listing in listings:#[:10]:
 #     webbrowser.open(URL, new = 2)
 
 #     sleep(randint(10, 60))
-

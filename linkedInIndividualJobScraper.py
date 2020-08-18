@@ -6,7 +6,7 @@ import webbrowser
 # from jobScraper import searchPhrases
 
 
-def linkedInIndividualJobScraper(title, link, score):
+def linkedInIndividualJobScraper(link, score):
 
     # URL = "https://www.linkedin.com/jobs/view/python-developer-at-ateeca-inc-1986278697/?refId=1c0747a8-d317-4f3f-8b46-d126e35e61f3&position=1&pageNum=0&trk=public_jobs_job-result-card_result-card_full-click"
 
@@ -19,7 +19,7 @@ def linkedInIndividualJobScraper(title, link, score):
     soup = BeautifulSoup(page.content, 'html.parser')
 
     # print(soup.prettify())
-
+    
     try:
         seniorityLevel = soup.find('h3', text = 'Seniority level').next_element.next_element.text
         # print(seniorityLevel)
@@ -43,5 +43,5 @@ def linkedInIndividualJobScraper(title, link, score):
 
     sleep(randint(1, 10))
 
-    return title, link, score
+    return score
 
