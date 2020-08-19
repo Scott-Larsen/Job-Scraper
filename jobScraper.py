@@ -4,20 +4,21 @@ from time import sleep
 from random import randint
 from linkedInJobBoardScraper import linkedInMetaSearch
 import smtplib
+from datetime import datetime
 from credentials import USER, PASS, EMAIL
 
-
-searchPhrases = {'Python': 50, 'Junior': 50, 'Jr.': 50, 'Jr': 50,
+# 'Python': 50, 'Python Developer': 50,
+searchPhrases = {
 
 'Flask': 25,
 
-'Portland': 10,
+'Portland': 10, 'Junior': 10, 'Jr': 10,
 
 'Lead Python Developer': -50, 'Lead Developer': -50, 'Lead Software Developer': -50, 'Architect': -50, 'Cloud Technical Solutions Engineer': -50,'Ruby on Rails Fullstack Engineer': -50, 'Ruby on Rails Developer': -50, 'Clearance': -50, 'Active SECRET': -50, '7+ years': -50, '5+ years': -50, 'Mid-Level': -50,
 
 'Mid-Senior level': -25, 'Solutions Engineer': -25, 'Data Engineer': -25, 'Data Science': -25, 'Talend': -25, 'ERP': -25, '4+ years': -25, 'Front End Developer': -25, 'Fintech': -25,
 
-'Application Development': -10, 'Blockchain': -10, 'Crypto': -10, 'Quant': -10, 'ETL Developer': -10, 'React': -10, 'React Native': -10, 'C++': -10, 'PHP': -10, 'Trading': -10, 'Hedge Fund': -10, 'Java': -10
+'Application Development': -10, 'Blockchain': -10, 'Crypto': -10, 'Quant': -10, 'ETL Developer': -10, 'React': -10, 'React Native': -10, 'C++': -10, 'PHP': -10, 'Trading': -10, 'Hedge Fund': -10, 'Java': -10, 'Jr.Java': -10
 }
 
 listings = []
@@ -27,6 +28,16 @@ linkedInURL = "https://www.linkedin.com/jobs/search/?f_E=1%2C2%2C3&f_LF=f_AL&f_T
 # https://www.linkedin.com/jobs/search/?f_LF=f_AL&geoId=103644278&keywords=python%20developer%20-senior%20-sr%20-mid-senior&location=United%20States"
 
 # listings.append(linkedInMetaSearch(linkedInURL, jobs))
+
+class Job:
+    def __init__(self, score, title, company, link, datePosted, location, listingSite):
+        self.score = score
+        self.title = title
+        self.company = company
+        self.link = link
+        self.datePosted = datePosted
+        self.location = location
+        self.listingSite = listingSite
 
 jobs = {}
 linkedInMetaSearch(linkedInURL, jobs)
@@ -47,8 +58,11 @@ def sendEMail():
     for jobID in jobIDs:
 
         # body += f"({jobID[0]}) <a href='{jobID[4]}'>{jobID[2]}</a> at {jobID[3]} in {jobID[6]} posted {jobID[5]} ({jobID[1]})\n"
-        body += f"({jobID[0]}) {jobID[2]} at {jobID[3]} in {jobID[6]} posted {jobID[5]} ({jobID[1]})\n{jobID[4]}\n"
+        body += f"({jobID[0]}) {jobID[2]} at {jobID[3]} in {jobID[6]} posted {jobID[5]} ({jobID[1]})\n{jobID[4]}\n\n"
         # [score, id, title, company, link, datePosted, location]
+    print(body)
+    # body = body.encode('utf-8').strip()
+    body = body.encode('ascii', 'ignore').decode('ascii')
     msg = f"Subject: {subject}\n\n{body}"
     
 
@@ -74,12 +88,31 @@ def sendEMail():
 
 for job in jobs.keys():
     # print(f"{listing[2] = } {listing[1] = } {listing[3] = }")
-    score, title = jobs[job][0], jobs[job][2]
+    score, id, title, company, link, datePosted, location = jobs[job][0], jobs[job][1], jobs[job][2], jobs[job][3], jobs[job][4], jobs[job][5], jobs[job][6], 
+    # score, title = jobs[job][0], jobs[job][2]
+
+    print(f"\nEvaluating {title} at {company} ({id}).")
+    # print(link)
+
+    datetimePosted = datetime.strptime(datePosted, '%Y-%m-%d')
+    # print(f"{datetimePosted = }")
+    age = datetime.now().timestamp() - datetimePosted.timestamp()
+    # print(f"{age = }")
+    ageInDays = int(age / 24 / 60 / 60)
+    # print(f"{ageInDays = }")
+    ageReduction = ageInDays ** 2
+    score -= ageReduction
+    if ageReduction > 0:
+        print(f"... docking {ageReduction} from the score ({score}) because the listing is {ageInDays} days old.")
+
     for searchPhrase in searchPhrases.keys():
         if searchPhrase in title:
-            dockingValue = 2 * searchPhrases[searchPhrase]
-            score += dockingValue
-            print(f"... docking {dockingValue} points for {searchPhrase} being in {title}")
+            # positiveNegative = -1 if searchPhrases[searchPhrase] < 0 else 1
+            scoreAdjustment = 2 * searchPhrases[searchPhrase]
+            score += scoreAdjustment
+            if scoreAdjustment > 0:
+                scoreAdjustment = '+' + str(scoreAdjustment)
+            print(f"... {scoreAdjustment} points for {searchPhrase} being in {title}")
 
 #     # TODO if searchPhrase in jobDescription
 

@@ -2,11 +2,11 @@ import requests
 from bs4 import BeautifulSoup
 from time import sleep
 from random import randint
-from linkedInIndividualJobScraper import linkedInIndividualJobScraper
+from diceIndividualJobScraper import diceIndividualJobScraper
 # from datetime import datetime
 
 
-def linkedInMetaSearch(URL, jobs):
+def diceMetaSearch(URL, jobs):
 
     headers = {"User-Agent": 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:73.0) Gecko/20100101 Firefox/73.0'}
 
@@ -21,12 +21,12 @@ def linkedInMetaSearch(URL, jobs):
     # # listing.findAll(text='Promoted')
     # print(promoted)
 
-# linkedInMetaSearch("https://www.linkedin.com/jobs/search/?f_TPR=r86400&geoId=103644278&keywords=python%20developer%20-senior%20-sr%20-mid-senior&location=United%20States%22")
+# diceMetaSearch("https://www.dice.com/jobs/search/?f_TPR=r86400&geoId=103644278&keywords=python%20developer%20-senior%20-sr%20-mid-senior&location=United%20States%22")
 
     # li class="result-card
     # soup.find_all("a", class_="sister")
 
-    print("Doing a metascrape of jobs on LinkedIn.\n")
+    print("Doing a metascrape of jobs on dice.\n")
     listings = soup.find_all("li", class_="result-card")
 
     # print(listings[0].prettify())
@@ -72,7 +72,7 @@ def linkedInMetaSearch(URL, jobs):
 
         print(f"Scraping {title} at {company}\n")
 
-        linkedInIndividualJobScraper(link, score)
+        diceIndividualJobScraper(link, score)
 
         # print(soup.prettify())
         # print(listings[0].prettify())
