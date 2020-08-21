@@ -9,6 +9,7 @@ from credentials import USER, PASS, EMAIL
 
 # 'Python': 50, 'Python Developer': 50,
 searchPhrases = {
+'Entry level': 50,
 
 'Flask': 25,
 
@@ -16,31 +17,36 @@ searchPhrases = {
 
 'Lead Python Developer': -50, 'Lead Developer': -50, 'Lead Software Developer': -50, 'Architect': -50, 'Cloud Technical Solutions Engineer': -50,'Ruby on Rails Fullstack Engineer': -50, 'Ruby on Rails Developer': -50, 'Clearance': -50, 'Active SECRET': -50, '7+ years': -50, '5+ years': -50, 'Mid-Level': -50,
 
-'Mid-Senior level': -25, 'Solutions Engineer': -25, 'Data Engineer': -25, 'Data Science': -25, 'Talend': -25, 'ERP': -25, '4+ years': -25, 'Front End Developer': -25, 'Fintech': -25,
+'Mid-Senior level': -25, 'Solutions Engineer': -25, 'Data Engineer': -25, 'Data Science': -25, 'Talend': -25, 'ERP': -25, '4+ years': -25, 'Front End Developer': -25, 'Fintech': -25, 'Trading': -25, 'Wall Street': -25,
 
-'Application Development': -10, 'Blockchain': -10, 'Crypto': -10, 'Quant': -10, 'ETL Developer': -10, 'React': -10, 'React Native': -10, 'C++': -10, 'PHP': -10, 'Trading': -10, 'Hedge Fund': -10, 'Java': -10, 'Jr.Java': -10
+'Application Development': -10, 'Blockchain': -10, 'Crypto': -10, 'Quant': -10, 'ETL Developer': -10, 'React': -10, 'React Native': -10, 'C++': -10, 'PHP': -10, 'Trading': -10, 'Hedge Fund': -10, 'Java': -10, 'Jr.Java': -10, 'Associate': -10,
+
+'Web Developer': -5
 }
 
 listings = []
 
-linkedInURL = "https://www.linkedin.com/jobs/search/?f_E=1%2C2%2C3&f_LF=f_AL&f_TPR=r86400&geoId=103644278&keywords=python%20developer%20-senior%20-sr%20-mid-senior&location=United%20States"
+URLs = ["https://www.linkedin.com/jobs/search/?f_E=1%2C2%2C3&f_LF=f_AL&f_TPR=r86400&geoId=103644278&keywords=python%20developer%20-senior%20-sr%20-mid-senior&location=United%20States",
+"https://www.python.org/jobs/"
+]
 # "https://www.linkedin.com/jobs/search/?f_TPR=r86400&geoId=103644278&keywords=python%20developer%20-senior%20-sr%20-mid-senior&location=United%20States%22"
 # https://www.linkedin.com/jobs/search/?f_LF=f_AL&geoId=103644278&keywords=python%20developer%20-senior%20-sr%20-mid-senior&location=United%20States"
 
 # listings.append(linkedInMetaSearch(linkedInURL, jobs))
 
-class Job:
-    def __init__(self, score, title, company, link, datePosted, location, listingSite):
-        self.score = score
-        self.title = title
-        self.company = company
-        self.link = link
-        self.datePosted = datePosted
-        self.location = location
-        self.listingSite = listingSite
+# class Job:
+#     def __init__(self, score, title, company, link, datePosted, location, listingSite):
+#         self.score = score
+#         self.title = title
+#         self.company = company
+#         self.link = link
+#         self.datePosted = datePosted
+#         self.location = location
+#         self.listingSite = listingSite
 
 jobs = {}
-linkedInMetaSearch(linkedInURL, jobs)
+for URL in URLs:
+    linkedInMetaSearch(URL, jobs)
 
 def sendEMail():
     server = smtplib.SMTP("smtp.gmail.com", 587)

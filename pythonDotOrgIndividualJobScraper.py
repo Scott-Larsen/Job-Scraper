@@ -38,34 +38,33 @@ def pythonDotOrgIndividualJobScraper(link, score):
     # print(f"{jobDetails = }")
 
     jobDescription = {}
-
     for header in jobDetails.find_all('h2'):
-        # print(f"{header = }")
-        # if header != None:
         jobDetail = header.get_text().strip()
-        # print(f"{jobDetail = }")
         nextNode = header
         jobDetailText = []
         while True:
             nextNode = nextNode.nextSibling
-            if nextNode is None:
+            if not nextNode: # This writes out the last of the H2 tags and its following contents
+                jobDescription[jobDetail] = "\n".join(jobDetailText)
                 break
-            if isinstance(nextNode, NavigableString):
+            elif isinstance(nextNode, NavigableString): # Adds non-H2 tags to the text to attach to the text of the H2
                 if nextNode.strip():
                     jobDetailText.append(nextNode.strip())
-                    # print(f"{nextNode.strip() = }")
                     pass
-            if isinstance(nextNode, Tag):
+            elif isinstance(nextNode, Tag): # Detects the next H2 and writes the compiled text to the previous H2
                 if nextNode.name == "h2":
-                    nl = "\n"
-                    print(f"\n\nAssigning {jobDetail} of jobDescription\n\n {nl.join(jobDetailText)}")
                     jobDescription[jobDetail] = "\n".join(jobDetailText)
-                    # print(f"{jobDetailText = }")
                     break
                 jobDetailText.append(nextNode.get_text(strip=True))
+                
+            # else:
+            #     print("Reached else")
+            #     jobDescription[jobDetail] = "\n".join(jobDetailText)
+    
+    # print(jobDescription['Contact Info'])
 
-    # print k, v for k, v in jobDetails.items()
-    # print(jobDetails)
+    # print(jobDescription.items())
+    # print(jobDescription)
 
                 # print(f"{nextNode.get_text(strip=True) = }")
                 # print(f"{nextNode.get_text(strip=True).strip() = }")
@@ -126,9 +125,9 @@ def pythonDotOrgIndividualJobScraper(link, score):
 
     sleep(randint(1, 10))
 
-    return score
+    return score, jobDescription
 
-link = "https://www.python.org/jobs/4793/"
-score = 1000
-pythonDotOrgIndividualJobScraper(link, score)
+# link = "https://www.python.org/jobs/4793/"
+# score = 1000
+# pythonDotOrgIndividualJobScraper(link, score)
 
