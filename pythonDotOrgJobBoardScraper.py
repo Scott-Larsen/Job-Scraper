@@ -39,7 +39,7 @@ def pythonDotOrgMetaSearch(URL, jobs):
 
     # print(listings[0].find("a"))
     
-    for listing in listings[:3]:
+    for listing in listings:
 
         # print(f"{listing}\n\n")
 

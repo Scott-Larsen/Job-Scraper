@@ -2,9 +2,12 @@ import requests
 from bs4 import BeautifulSoup
 from time import sleep
 from random import randint
-from linkedInJobBoardScraper import linkedInMetaSearch
 import smtplib
 from datetime import datetime
+from dateutil import parser
+
+from linkedInJobBoardScraper import linkedInMetaSearch
+from pythonDotOrgJobBoardScraper import pythonDotOrgMetaSearch
 from credentials import USER, PASS, EMAIL
 
 # 'Python': 50, 'Python Developer': 50,
@@ -29,24 +32,15 @@ listings = []
 URLs = ["https://www.linkedin.com/jobs/search/?f_E=1%2C2%2C3&f_LF=f_AL&f_TPR=r86400&geoId=103644278&keywords=python%20developer%20-senior%20-sr%20-mid-senior&location=United%20States",
 "https://www.python.org/jobs/"
 ]
-# "https://www.linkedin.com/jobs/search/?f_TPR=r86400&geoId=103644278&keywords=python%20developer%20-senior%20-sr%20-mid-senior&location=United%20States%22"
-# https://www.linkedin.com/jobs/search/?f_LF=f_AL&geoId=103644278&keywords=python%20developer%20-senior%20-sr%20-mid-senior&location=United%20States"
-
-# listings.append(linkedInMetaSearch(linkedInURL, jobs))
-
-# class Job:
-#     def __init__(self, score, title, company, link, datePosted, location, listingSite):
-#         self.score = score
-#         self.title = title
-#         self.company = company
-#         self.link = link
-#         self.datePosted = datePosted
-#         self.location = location
-#         self.listingSite = listingSite
 
 jobs = {}
+scores = []
+
 for URL in URLs:
-    linkedInMetaSearch(URL, jobs)
+    if "www.linkedin.com" in URL:
+        linkedInMetaSearch(URL, jobs)
+    if "www.python.org" in URL:
+        pythonDotOrgMetaSearch(URL, jobs)
 
 def sendEMail():
     server = smtplib.SMTP("smtp.gmail.com", 587)
@@ -57,7 +51,6 @@ def sendEMail():
     server.login(USER, PASS)
 
     subject = f"Job Scraper Results"
-    # body = "Check B&HPhoto"
 
     body = ""
     jobIDs = [jobs[x] for x in sorted(jobs.keys(), key = lambda x: jobs[x][0], reverse = True)][:10]
@@ -100,8 +93,28 @@ for job in jobs.keys():
     print(f"\nEvaluating {title} at {company} ({id}).")
     # print(link)
 
-    datetimePosted = datetime.strptime(datePosted, '%Y-%m-%d')
+
+    # try:
+    # print(f"{datePosted = }, {type(datePosted) = }")
+    # if len(datePosted) == 8:
+    #     dateFormat = "%H:%M:%S"
+    # elif len(datePosted) == 32: 
+    #     # 2020-08-21T11:34:29.849639+00:00) 26 32
+    #     # 2020-08-21T11:34:29.849639+00:00
+    #     # datePosted = "2020-08-21T11:34:29.849639+00:00" # ) #26 32
+    #     # datePosted = "11:34:29"
+    #     dateFormat = "%Y-%m-%dT%H:%M:%S.%f+%z"
+    # # dateFormat = "%H:%M:%S"
+    # print(f"{datePosted = }, {dateFormat = }")
+    # datetimePosted = datetime.strptime(datePosted, dateFormat)
+
+    datetimePosted = parser.parse(datePosted)
+    # print(datetimePosted)
     # print(f"{datetimePosted = }")
+    # except:
+    #     print(f"datetime.strptime failed - {datePosted = }")
+    #     pass
+    
     age = datetime.now().timestamp() - datetimePosted.timestamp()
     # print(f"{age = }")
     ageInDays = int(age / 24 / 60 / 60)
