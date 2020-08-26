@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 from time import sleep
 from random import randint
 import smtplib
+import os.path
 from datetime import datetime
 from dateutil import parser
 
@@ -12,15 +13,17 @@ from credentials import USER, PASS, EMAIL
 
 # 'Python': 50, 'Python Developer': 50,
 searchPhrases = {
-'Entry level': 50,
+'Entry level': 50, 
 
 'Flask': 25,
 
-'Portland': 10, 'Junior': 10, 'Jr': 10,
+'Junior': 10, 'Jr': 10, 'Portland': 10, 'Oregon': 10, ', OR': 10, 'Eugene': 10, 'San Francisco': 10, 'Los Angeles': 10, 'Santa Monica': 10, 'Marina del Rey': 10, 'Venice': 10, 'Long Beach': 10, 'Pasadena': 10, 'Irvine': 10, 'Silicon Valley': 10, 'San Jose': 10, 'California': 10, ', CA': 10, 'Seattle': 10, 'Washington': 10, ', WA': 10, 'New York': 10, 'NYC': 10,
 
-'Lead Python Developer': -50, 'Lead Developer': -50, 'Lead Software Developer': -50, 'Architect': -50, 'Cloud Technical Solutions Engineer': -50,'Ruby on Rails Fullstack Engineer': -50, 'Ruby on Rails Developer': -50, 'Clearance': -50, 'Active SECRET': -50, '7+ years': -50, '5+ years': -50, 'Mid-Level': -50,
+'No longer accepting applications': -1000, 'You applied on': -1000,
 
-'Mid-Senior level': -25, 'Solutions Engineer': -25, 'Data Engineer': -25, 'Data Science': -25, 'Talend': -25, 'ERP': -25, '4+ years': -25, 'Front End Developer': -25, 'Fintech': -25, 'Trading': -25, 'Wall Street': -25,
+'Lead Python Developer': -50, 'Lead Developer': -50, 'Lead Software Developer': -50, 'Cloud Technical Solutions Engineer': -50,'Ruby on Rails Fullstack Engineer': -50, 'Ruby on Rails Developer': -50, 'Clearance': -50, 'Active SECRET': -50, '7+ years': -50, '5+ years': -50, 'Mid-Level': -50, 'Mid-Senior': -50, 'Senior Python': -50,
+
+'Systems Engineering': -25, 'Solutions Engineer': -25, 'Data Engineer': -25, 'Data Science': -25, 'Talend': -25, 'ERP': -25, '4+ years': -25, 'Front End Developer': -25, 'Fintech': -25, 'Trading': -25, 'Wall Street': -25, 
 
 'Application Development': -10, 'Blockchain': -10, 'Crypto': -10, 'Quant': -10, 'ETL Developer': -10, 'React': -10, 'React Native': -10, 'C++': -10, 'PHP': -10, 'Trading': -10, 'Hedge Fund': -10, 'Java': -10, 'Jr.Java': -10, 'Associate': -10,
 
@@ -33,14 +36,56 @@ URLs = ["https://www.linkedin.com/jobs/search/?f_E=1%2C2%2C3&f_LF=f_AL&f_TPR=r86
 "https://www.python.org/jobs/"
 ]
 
+scrapedJobsFilename = "scrapedJobs.txt"
+
 jobs = {}
-scores = []
+# scores = []
+scrapedJobs = []
+
+def readInReturnDelimitedTextFileToDataStructure(directory, filename):
+    listFromFile = []
+    dictionaryFromFile = {}
+        
+    if os.path.exists(directory + filename):
+        print(f"Opening {filename} and writing it into a data structure....\n")
+
+        # open file and read the content in a list
+        # print(directory + filename)
+        with open(directory + filename, 'r') as filehandle:
+            for line in filehandle:
+                currentLine = line[:-1]
+                if " " in currentLine:
+                    currentLine = currentLine.split()
+                    dictionaryFromFile[currentLine[0]] = int(currentLine[1])
+                else:
+                    listFromFile.append(currentLine)
+    else:
+        print(f"{directory + filename} doesn't exist")
+    if len(listFromFile) >= len(dictionaryFromFile):
+        dataStructureToReturn = listFromFile
+    else:
+        dataStructureToReturn = dictionaryFromFile
+    print(f"Loaded in {filename}.\n")
+    return dataStructureToReturn
+
+def writeOutDataStructureToReturnDelimitedTextFile(directory, filename, dataStructureToBeWrittenOut):
+    if os.path.exists(directory + filename):
+        print(f"Writing out list to {filename}....\n")
+        with open(directory + filename, 'w') as filehandle:
+            if isinstance(dataStructureToBeWrittenOut, list):
+                filehandle.writelines(f"{item}\n" for item in dataStructureToBeWrittenOut)
+            elif isinstance(dataStructureToBeWrittenOut, dict):
+                filehandle.writelines(f"{key} {dataStructureToBeWrittenOut[key]}\n" for key in dataStructureToBeWrittenOut.keys())
+
+scrapedJobs = readInReturnDelimitedTextFileToDataStructure('', scrapedJobsFilename)
 
 for URL in URLs:
     if "www.linkedin.com" in URL:
-        linkedInMetaSearch(URL, jobs)
+        (jobs, scrapedJobs) = linkedInMetaSearch(URL, jobs, scrapedJobs)
     if "www.python.org" in URL:
-        pythonDotOrgMetaSearch(URL, jobs)
+        (jobs, scrapedJobs) = pythonDotOrgMetaSearch(URL, jobs, scrapedJobs)
+
+writeOutDataStructureToReturnDelimitedTextFile('', 'scrapedJobs.txt', scrapedJobs)
 
 def sendEMail():
     server = smtplib.SMTP("smtp.gmail.com", 587)
@@ -57,16 +102,19 @@ def sendEMail():
     for jobID in jobIDs:
 
         # body += f"({jobID[0]}) <a href='{jobID[4]}'>{jobID[2]}</a> at {jobID[3]} in {jobID[6]} posted {jobID[5]} ({jobID[1]})\n"
-        body += f"({jobID[0]}) {jobID[2]} at {jobID[3]} in {jobID[6]} posted {jobID[5]} ({jobID[1]})\n{jobID[4]}\n\n"
+        body += f"({jobID[0]}) {jobID[2]} at {jobID[3]} in {jobID[5]} posted {jobID[4][5:11]}\n{jobID[1]}\n... {jobID[6][100:500]} ...\n\n\n"
         # [score, id, title, company, link, datePosted, location]
-    print(body)
+        # id = [score, link, title, company, datePosted, location, fullText] #, description, restrictions, requirements, about, contact, seniorityLevel]
+        # id = [0score, 1link, 2title, 3company, 4datePosted, 5location, 6fullText]
+    # print(body)
     # body = body.encode('utf-8').strip()
-    body = body.encode('ascii', 'ignore').decode('ascii')
+    # body = body.encode('utf-8')
+    body = body.encode('ascii', 'ignore').decode('ascii') # last working
     msg = f"Subject: {subject}\n\n{body}"
     
 
     server.sendmail(EMAIL, EMAIL, msg)
-    print("E-mail has been sent.")
+    print("E-mail has been sent.\n\n")
 
     server.quit()
 
@@ -85,10 +133,11 @@ def sendEMail():
 # print(li_123.location)
 
 
-for job in jobs.keys():
+for id in jobs.keys():
     # print(f"{listing[2] = } {listing[1] = } {listing[3] = }")
-    score, id, title, company, link, datePosted, location = jobs[job][0], jobs[job][1], jobs[job][2], jobs[job][3], jobs[job][4], jobs[job][5], jobs[job][6], 
-    # score, title = jobs[job][0], jobs[job][2]
+    score, link, title, company, datePosted, location, fullText = jobs[id][0], jobs[id][1], jobs[id][2], jobs[id][3], jobs[id][4], jobs[id][5], jobs[id][6]
+    # score, title = jobs[id][0], jobs[id][2]
+    # id = [score, link, title, company, datePosted, location, fullText]
 
     print(f"\nEvaluating {title} at {company} ({id}).")
     # print(link)
@@ -125,18 +174,25 @@ for job in jobs.keys():
         print(f"... docking {ageReduction} from the score ({score}) because the listing is {ageInDays} days old.")
 
     for searchPhrase in searchPhrases.keys():
-        if searchPhrase in title:
+        if searchPhrase.lower() in title.lower():
             # positiveNegative = -1 if searchPhrases[searchPhrase] < 0 else 1
             scoreAdjustment = 2 * searchPhrases[searchPhrase]
             score += scoreAdjustment
             if scoreAdjustment > 0:
                 scoreAdjustment = '+' + str(scoreAdjustment)
-            print(f"... {scoreAdjustment} points for {searchPhrase} being in {title}")
+            print(f"... {scoreAdjustment} points ({score}) for {searchPhrase} being in {title}.")
+        if searchPhrase.lower() in fullText.lower():
+            # positiveNegative = -1 if searchPhrases[searchPhrase] < 0 else 1
+            scoreAdjustment = searchPhrases[searchPhrase]
+            score += scoreAdjustment
+            if scoreAdjustment > 0:
+                scoreAdjustment = '+' + str(scoreAdjustment)
+            print(f"... {scoreAdjustment} points ({score}) for {searchPhrase} being in the text of the listing.")
 
 #     # TODO if searchPhrase in jobDescription
 
     # listing = list(listing)
-    jobs[job][0] = score
+    jobs[id][0] = score
 
 print('\n')
 

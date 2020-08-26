@@ -6,11 +6,11 @@ from linkedInIndividualJobScraper import linkedInIndividualJobScraper
 # from datetime import datetime
 
 
-def linkedInMetaSearch(URL, jobs):
+def linkedInMetaSearch(URL, jobs, scrapedJobs):
 
     headers = {"User-Agent": 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:73.0) Gecko/20100101 Firefox/73.0'}
 
-    print("")
+    # print("")
 
     page = requests.get(URL, headers = headers)
 
@@ -26,7 +26,7 @@ def linkedInMetaSearch(URL, jobs):
     # li class="result-card
     # soup.find_all("a", class_="sister")
 
-    print("Doing a metascrape of jobs on LinkedIn.\n")
+    print("Doing a metascrape of jobs on LinkedIn:")
     listings = soup.find_all("li", class_="result-card")
 
     # print(listings[0].prettify())
@@ -35,10 +35,19 @@ def linkedInMetaSearch(URL, jobs):
 
         # print(listing)
 
-        score = 1000
 
         id = "li_" + listing.get("data-id")
         # print(jobID)
+
+        if id in scrapedJobs:
+            break
+        else:
+            scrapedJobs.insert(0, id)
+        
+        score = 1000
+
+        link = listing.find("a").get('href')
+        # print(jobLink)
 
         # TODO check against a central list to make sure it's not a duplicate
 
@@ -70,9 +79,9 @@ def linkedInMetaSearch(URL, jobs):
         # age = (datetimePosted - datetime.now())
         # print(age)
 
-        print(f"Scraping {title} at {company}\n")
+        print(f"Scraping {title} at {company}")
 
-        linkedInIndividualJobScraper(link, score)
+        fullText = linkedInIndividualJobScraper(link)
 
         # print(soup.prettify())
         # print(listings[0].prettify())
@@ -81,7 +90,7 @@ def linkedInMetaSearch(URL, jobs):
 
         sleep(randint(1, 10))
 
-        jobs[id] = [score, id, title, company, link, datePosted, location]
+        jobs[id] = [score, link, title, company, datePosted, location, fullText]
 
     # return score, id, title, company, link, datePosted, location
-    return jobs
+    return jobs, scrapedJobs
