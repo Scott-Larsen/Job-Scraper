@@ -5,7 +5,6 @@ from random import randint
 from pythonDotOrgIndividualJobScraper import pythonDotOrgIndividualJobScraper
 
 
-
 def pythonDotOrgMetaSearch(URL, jobs, scrapedJobs):
 
     headers = {"User-Agent": 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:73.0) Gecko/20100101 Firefox/73.0'}
