@@ -19,6 +19,10 @@ def pythonDotOrgMetaSearch(URL, jobs, scrapedJobs):
     
     for listing in listings:
 
+        fullLink = listing.find("a")
+        relativeLink = fullLink.get('href')
+        link = "https://www.python.org" + relativeLink
+
         id = "po_" + relativeLink[-5:-1]
         if id in scrapedJobs:
             break
@@ -26,10 +30,6 @@ def pythonDotOrgMetaSearch(URL, jobs, scrapedJobs):
             scrapedJobs.insert(0, id)
 
         score = 1000
-
-        fullLink = listing.find("a")
-        relativeLink = fullLink.get('href')
-        link = "https://www.python.org" + relativeLink
 
         title = fullLink.contents[0]
 

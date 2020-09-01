@@ -11,10 +11,14 @@ def linkedInIndividualJobScraper(link):
     page = requests.get(link, headers = headers)
     soup = BeautifulSoup(page.content, 'html.parser')
 
-    fullText = soup.find('div', class_="show-more-less-html__markup").get_text()
+    try:
+        fullText = soup.find('div', class_="show-more-less-html__markup").get_text()
 
-    if soup.find('figcaption', class_="closed-job__flavor--closed"):
-        fullText = 'No longer accepting applications ' + fullText
+        if soup.find('figcaption', class_="closed-job__flavor--closed"):
+            fullText = 'No longer accepting applications ' + fullText
+    
+    except AttributeError as e:
+        print(f"\n{e}: {link} has no job description\n")
 
     sleep(randint(1, 10))
 

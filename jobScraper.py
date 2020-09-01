@@ -1,14 +1,17 @@
 import requests
 from bs4 import BeautifulSoup
 from time import sleep
+import pytz
 from random import randint
 import smtplib
 import os.path
+import pytz
 from datetime import datetime
 from dateutil import parser
 
 from linkedInJobBoardScraper import linkedInMetaSearch
 from pythonDotOrgJobBoardScraper import pythonDotOrgMetaSearch
+from zipRecruiterJobBoardScraper import zipRecruiterMetaSearch
 from credentials import USER, PASS, EMAIL
 
 # 'Python': 50, 'Python Developer': 50,
@@ -21,19 +24,20 @@ searchPhrases = {
 
 'No longer accepting applications': -1000, 'You applied on': -1000,
 
-'Lead Python Developer': -50, 'Lead Developer': -50, 'Lead Software Developer': -50, 'Cloud Technical Solutions Engineer': -50,'Ruby on Rails Fullstack Engineer': -50, 'Ruby on Rails Developer': -50, 'Clearance': -50, 'Active SECRET': -50, '7+ years': -50, '5+ years': -50, 'Mid-Level': -50, 'Mid-Senior': -50, 'Senior Python': -50,
+'Lead Python Developer': -50, 'Lead Developer': -50, 'Lead Software Developer': -50, 'Cloud Technical Solutions Engineer': -50,'Ruby on Rails Fullstack Engineer': -50, 'Ruby on Rails Developer': -50, 'Clearance': -50, 'Active SECRET': -50, '7+ years': -50, '6+ years': -50, '5+ years': -50, 'Minimum of 5 years': -50, 'Mid-Level': -50, 'Mid-Senior': -50, 'Senior Python': -50, 'Senior Data': -50, 'Senior Full Stack': -50, 'Senior Backend': -50,
 
-'Systems Engineering': -25, 'Solutions Engineer': -25, 'Data Engineer': -25, 'Data Science': -25, 'Talend': -25, 'ERP': -25, '4+ years': -25, 'Front End Developer': -25, 'Fintech': -25, 'Trading': -25, 'Wall Street': -25, 
+'Systems Engineering': -25, 'Solutions Engineer': -25, 'Data Engineer': -25, 'Data Science': -25, 'Talend': -25, 'ERP': -25, '4+ years': -25, 'Front End Developer': -25, 'Frontend Web': -25, 'Fintech': -25, 'Trading': -25, 'Wall Street': -25, 'DevOps': -25, 'Qlik': -25,
 
-'Application Development': -10, 'Blockchain': -10, 'Crypto': -10, 'Quant': -10, 'ETL Developer': -10, 'React': -10, 'React Native': -10, 'C++': -10, 'PHP': -10, 'Trading': -10, 'Hedge Fund': -10, 'Java': -10, 'Jr.Java': -10, 'Associate': -10,
+'Application Development': -10, 'Blockchain': -10, 'Crypto': -10, 'Quant': -10, 'ETL Developer': -10, 'React': -10, 'React Native': -10, 'C++': -10, 'PHP': -10, 'Trading': -10, 'Hedge Fund': -10, 'Java': -10, 'Jr.Java': -10, 'Web Developer': -10, 'WordPress': -10, 'Shopify': -10, '3-4 years': -10,
 
-'Web Developer': -5
+'React': -5, 'Vue': -5, 'Angular': -5, 'Cassandra': -5, 'Node': -5, 'Associate': -10
 }
 
 listings = []
 
 URLs = ["https://www.linkedin.com/jobs/search/?f_E=1%2C2%2C3&f_LF=f_AL&f_TPR=r86400&geoId=103644278&keywords=python%20developer%20-senior%20-sr%20-mid-senior&location=United%20States",
-"https://www.python.org/jobs/"
+"https://www.python.org/jobs/", 
+"https://www.ziprecruiter.com/candidate/search?radius=5000&days=1&search=Python+-senior+-devops+-etl+-j2ee+-%22data+engineer%22+-%22data+scientist%22+-%22technical+writer%22+-wix+-%22systems+engineer%22+-FPGA+-director+-principal+-%22reliability+engineer%22&location=Omaha%2C+NE"
 ]
 
 scrapedJobsFilename = "scrapedJobs.txt"
@@ -84,6 +88,8 @@ for URL in URLs:
         (jobs, scrapedJobs) = linkedInMetaSearch(URL, jobs, scrapedJobs)
     if "www.python.org" in URL:
         (jobs, scrapedJobs) = pythonDotOrgMetaSearch(URL, jobs, scrapedJobs)
+    if "www.ziprecruiter.com" in URL:
+        (jobs, scrapedJobs) = zipRecruiterMetaSearch(URL, jobs, scrapedJobs)
 
 writeOutDataStructureToReturnDelimitedTextFile('', 'scrapedJobs.txt', scrapedJobs)
 
@@ -98,7 +104,7 @@ def sendEMail():
     subject = f"Job Scraper Results"
 
     body = ""
-    jobIDs = [jobs[x] for x in sorted(jobs.keys(), key = lambda x: jobs[x][0], reverse = True)][:10]
+    jobIDs = [jobs[x] for x in sorted(jobs.keys(), key = lambda x: jobs[x][0], reverse = True)][:25]
     for jobID in jobIDs:
 
         # body += f"({jobID[0]}) <a href='{jobID[4]}'>{jobID[2]}</a> at {jobID[3]} in {jobID[6]} posted {jobID[5]} ({jobID[1]})\n"
@@ -109,12 +115,16 @@ def sendEMail():
     # print(body)
     # body = body.encode('utf-8').strip()
     # body = body.encode('utf-8')
+    if len(body) == 0:
+        body += "\nNo results."
     body = body.encode('ascii', 'ignore').decode('ascii') # last working
     msg = f"Subject: {subject}\n\n{body}"
     
-
     server.sendmail(EMAIL, EMAIL, msg)
-    print("E-mail has been sent.\n\n")
+
+    timeZone_NY = pytz.timezone('America/NEW_York')
+    datetime_NY = datetime.now(timeZone_NY)
+    print(f"E-mail was sent at {datetime_NY.strftime('%H:%M')}.\n\n")
 
     server.quit()
 
@@ -157,18 +167,29 @@ for id in jobs.keys():
     # print(f"{datePosted = }, {dateFormat = }")
     # datetimePosted = datetime.strptime(datePosted, dateFormat)
 
-    datetimePosted = parser.parse(datePosted)
-    # print(datetimePosted)
-    # print(f"{datetimePosted = }")
-    # except:
-    #     print(f"datetime.strptime failed - {datePosted = }")
-    #     pass
-    
-    age = datetime.now().timestamp() - datetimePosted.timestamp()
-    # print(f"{age = }")
-    ageInDays = int(age / 24 / 60 / 60)
+    print(f"{datePosted = }")
+
+    # if isinstance(datePosted, str):
+    if "yesterday" in datePosted:
+        ageInDays = 1
+    elif "hours ago" in datePosted:
+        ageInDays = float(datePosted.split()[0]) / 24
+    else:
+        datetimePosted = parser.parse(datePosted)
+        # print(datetimePosted)
+        # print(f"{datetimePosted = }")
+        # except:
+        #     print(f"datetime.strptime failed - {datePosted = }")
+        #     pass
+        
+        age = datetime.now().timestamp() - datetimePosted.timestamp()
+        # print(f"{age = }")
+        ageInDays = int(age / 24 / 60 / 60)
+
+    print(f"{ageInDays = }")
+
     # print(f"{ageInDays = }")
-    ageReduction = ageInDays ** 2
+    ageReduction = int(ageInDays ** 2)
     score -= ageReduction
     if ageReduction > 0:
         print(f"... docking {ageReduction} from the score ({score}) because the listing is {ageInDays} days old.")
