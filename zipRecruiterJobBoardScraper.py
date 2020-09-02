@@ -29,7 +29,7 @@ def zipRecruiterMetaSearch(URL, jobs, scrapedJobs):
         # html = (jobListing.get_attribute('innerHTML'))
 
         # print(jobListing.get_attribute('innerHTML'))
-        print("\n" * 4)
+        # print("\n" * 4)
         
         # print("\n" * 10)
         id = link = jobListing.find_element_by_css_selector('a.job_link').get_attribute('href')
@@ -39,7 +39,7 @@ def zipRecruiterMetaSearch(URL, jobs, scrapedJobs):
         else:
             scrapedJobs.insert(0, id)
 
-        print(f"About to scrape {link}")
+        # print(f"About to scrape {link}")
 
         score = 1000
 
@@ -55,14 +55,16 @@ def zipRecruiterMetaSearch(URL, jobs, scrapedJobs):
 
         # linkedText = jobListing.find_element_by_xpath("//p[@class='job_snippet']/a").get_attribute('href')
 
+        print(f"Scraping {title} at {company}")
+        
         fullText, datePosted = zipRecruiterIndividualJobScraper(link)
 
         if fullText == False:
             fullText = abridgedText
 
-        print(f"{link = }")
+        # print(f"{link = }")
         # print(f"{linkedText = }")
-        print(f"{fullText = }")
+        # print(f"{fullText = }")
         # print(f"{datePosted = }")
 
         jobs[id] = [score, link, title, company, datePosted, location, fullText]

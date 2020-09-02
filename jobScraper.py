@@ -24,13 +24,13 @@ searchPhrases = {
 
 'No longer accepting applications': -1000, 'You applied on': -1000,
 
-'Lead Python Developer': -50, 'Lead Developer': -50, 'Lead Software Developer': -50, 'Cloud Technical Solutions Engineer': -50,'Ruby on Rails Fullstack Engineer': -50, 'Ruby on Rails Developer': -50, 'Clearance': -50, 'Active SECRET': -50, '7+ years': -50, '6+ years': -50, '5+ years': -50, 'Minimum of 5 years': -50, 'Mid-Level': -50, 'Mid-Senior': -50, 'Senior Python': -50, 'Senior Data': -50, 'Senior Full Stack': -50, 'Senior Backend': -50,
+'Lead Python Developer': -50, 'Lead Developer': -50, 'Lead Software Developer': -50, 'Lead Software Engineer': -50, 'Network Architect': -50, 'Cloud Technical Solutions Engineer': -50,'Ruby on Rails Fullstack Engineer': -50, 'Ruby on Rails Developer': -50, 'Clearance': -50, 'Active SECRET': -50, '7+ years': -50, '6+ years': -50, '5+ years': -50, 'Minimum of 5 years': -50, 'Mid-Level': -50, 'Mid-Senior': -50, 'Senior Python': -50, 'Senior Data': -50, 'Senior Full Stack': -50, 'Senior Backend': -50, 'Microsoft Dynamics': -50, 'Hardware Technician': -50, 'Linux System administrator': -50, 'Embedded Software': -50, 'Engineer III': -50, 'Engineer IV': -50, 'Engineer V': -50, 'Engineer VI': -50, 'Engineer VII': -50,
 
-'Systems Engineering': -25, 'Solutions Engineer': -25, 'Data Engineer': -25, 'Data Science': -25, 'Talend': -25, 'ERP': -25, '4+ years': -25, 'Front End Developer': -25, 'Frontend Web': -25, 'Fintech': -25, 'Trading': -25, 'Wall Street': -25, 'DevOps': -25, 'Qlik': -25,
+'Systems Engineering': -25, 'Solutions Engineer': -25, 'Network Developer': -25, 'Network Engineer': -25, 'Data Engineer': -25, 'Data Science': -25, 'Talend': -25, 'ERP': -25, '4+ years': -25, 'Front End Developer': -25, 'Frontend Web': -25, 'Fintech': -25, 'Trading': -25, 'Wall Street': -25, 'DevOps': -25, 'Qlik': -25, 'Engineer Infrastructure': -25, 'Cloud engineer': -25,
 
-'Application Development': -10, 'Blockchain': -10, 'Crypto': -10, 'Quant': -10, 'ETL Developer': -10, 'React': -10, 'React Native': -10, 'C++': -10, 'PHP': -10, 'Trading': -10, 'Hedge Fund': -10, 'Java': -10, 'Jr.Java': -10, 'Web Developer': -10, 'WordPress': -10, 'Shopify': -10, '3-4 years': -10,
+'Application Development': -10, 'Blockchain': -10, 'Crypto': -10, 'Quant': -10, 'ETL Developer': -10, 'React': -10, 'React Native': -10, 'C++': -10, 'PHP': -10, 'Trading': -10, 'Hedge Fund': -10, 'Java': -10, 'Jr.Java': -10, 'Web Developer': -10, 'WordPress': -10, 'Shopify': -10, '3-4 years': -10,'Engineer II': -10, 'Sports Betting': -10, 'Developer Mobile App': -10,
 
-'React': -5, 'Vue': -5, 'Angular': -5, 'Cassandra': -5, 'Node': -5, 'Associate': -10
+'React': -5, 'Vue': -5, 'Angular': -5, 'Cassandra': -5, 'Node': -5, '.NET': -5, 'JavaScript Developer': -5, 'Associate': -5 
 }
 
 listings = []
@@ -84,12 +84,12 @@ def writeOutDataStructureToReturnDelimitedTextFile(directory, filename, dataStru
 scrapedJobs = readInReturnDelimitedTextFileToDataStructure('', scrapedJobsFilename)
 
 for URL in URLs:
+    if "www.ziprecruiter.com" in URL:
+        (jobs, scrapedJobs) = zipRecruiterMetaSearch(URL, jobs, scrapedJobs)
     if "www.linkedin.com" in URL:
         (jobs, scrapedJobs) = linkedInMetaSearch(URL, jobs, scrapedJobs)
     if "www.python.org" in URL:
         (jobs, scrapedJobs) = pythonDotOrgMetaSearch(URL, jobs, scrapedJobs)
-    if "www.ziprecruiter.com" in URL:
-        (jobs, scrapedJobs) = zipRecruiterMetaSearch(URL, jobs, scrapedJobs)
 
 writeOutDataStructureToReturnDelimitedTextFile('', 'scrapedJobs.txt', scrapedJobs)
 
@@ -175,7 +175,7 @@ for id in jobs.keys():
             ageInDays = 1
         elif "just now" in datePosted:
             ageInDays = 0
-        elif "hours ago" in datePosted:
+        elif "hours ago" in datePosted or "hour ago" in datePosted:
             ageInDays = float(datePosted.split()[0]) / 24
         else:
             datetimePosted = parser.parse(datePosted)
@@ -188,9 +188,9 @@ for id in jobs.keys():
             age = datetime.now().timestamp() - datetimePosted.timestamp()
             # print(f"{age = }")
             ageInDays = int(age / 24 / 60 / 60)
-    except ParserError as e:
+    except parser.ParserError as e:
         print(f"{e}: {datePosted} couldn't be parsed properly from {link}")
-        ageInDays = 99999
+        ageInDays = 0
 
     print(f"{ageInDays = }")
 
