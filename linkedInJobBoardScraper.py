@@ -11,7 +11,7 @@ def linkedInMetaSearch(URL, jobs, scrapedJobs):
     page = requests.get(URL, headers = headers)
     soup = BeautifulSoup(page.content, 'html.parser')
 
-    print("Doing a metascrape of jobs on LinkedIn:")
+    print("\nDoing a metascrape of jobs on LinkedIn:")
     listings = soup.find_all("li", class_="result-card")
 
     for listing in listings:

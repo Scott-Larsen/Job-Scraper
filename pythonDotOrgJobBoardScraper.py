@@ -14,7 +14,7 @@ def pythonDotOrgMetaSearch(URL, jobs, scrapedJobs):
 
     jobsOrderedList = soup.find("ol", class_="list-recent-jobs")
 
-    print("Doing a metascrape of jobs on pythonDotOrg:")
+    print("\nDoing a metascrape of jobs on pythonDotOrg:")
     listings = jobsOrderedList.find_all("li")
     
     for listing in listings:

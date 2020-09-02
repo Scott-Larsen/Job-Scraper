@@ -170,21 +170,27 @@ for id in jobs.keys():
     print(f"{datePosted = }")
 
     # if isinstance(datePosted, str):
-    if "yesterday" in datePosted:
-        ageInDays = 1
-    elif "hours ago" in datePosted:
-        ageInDays = float(datePosted.split()[0]) / 24
-    else:
-        datetimePosted = parser.parse(datePosted)
-        # print(datetimePosted)
-        # print(f"{datetimePosted = }")
-        # except:
-        #     print(f"datetime.strptime failed - {datePosted = }")
-        #     pass
-        
-        age = datetime.now().timestamp() - datetimePosted.timestamp()
-        # print(f"{age = }")
-        ageInDays = int(age / 24 / 60 / 60)
+    try:
+        if "yesterday" in datePosted:
+            ageInDays = 1
+        elif "just now" in datePosted:
+            ageInDays = 0
+        elif "hours ago" in datePosted:
+            ageInDays = float(datePosted.split()[0]) / 24
+        else:
+            datetimePosted = parser.parse(datePosted)
+            # print(datetimePosted)
+            # print(f"{datetimePosted = }")
+            # except:
+            #     print(f"datetime.strptime failed - {datePosted = }")
+            #     pass
+            
+            age = datetime.now().timestamp() - datetimePosted.timestamp()
+            # print(f"{age = }")
+            ageInDays = int(age / 24 / 60 / 60)
+    except ParserError as e:
+        print(f"{e}: {datePosted} couldn't be parsed properly from {link}")
+        ageInDays = 99999
 
     print(f"{ageInDays = }")
 

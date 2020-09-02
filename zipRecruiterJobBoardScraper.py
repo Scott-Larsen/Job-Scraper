@@ -21,7 +21,7 @@ def zipRecruiterMetaSearch(URL, jobs, scrapedJobs):
 
     driver.get(URL)
     sleep(40)
-    print("Doing a metascrape of jobs on ZipRecruiter:")
+    print("\nDoing a metascrape of jobs on ZipRecruiter:")
     jobListings = driver.find_elements_by_xpath("//div[@ class='job_content']")
         
     # print(webAttributeLinks[0])
@@ -29,7 +29,7 @@ def zipRecruiterMetaSearch(URL, jobs, scrapedJobs):
         # html = (jobListing.get_attribute('innerHTML'))
 
         # print(jobListing.get_attribute('innerHTML'))
-        # print("\n" * 10)
+        print("\n" * 4)
         
         # print("\n" * 10)
         id = link = jobListing.find_element_by_css_selector('a.job_link').get_attribute('href')
@@ -38,6 +38,8 @@ def zipRecruiterMetaSearch(URL, jobs, scrapedJobs):
             break
         else:
             scrapedJobs.insert(0, id)
+
+        print(f"About to scrape {link}")
 
         score = 1000
 
@@ -60,8 +62,8 @@ def zipRecruiterMetaSearch(URL, jobs, scrapedJobs):
 
         print(f"{link = }")
         # print(f"{linkedText = }")
-        print(f"{fullText = }\n\n")
-        print(f"{datePosted = }\n\n\n\n")
+        print(f"{fullText = }")
+        # print(f"{datePosted = }")
 
         jobs[id] = [score, link, title, company, datePosted, location, fullText]
 
