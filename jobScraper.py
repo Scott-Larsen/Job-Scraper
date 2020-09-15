@@ -18,27 +18,29 @@ from credentials import USER, PASS, EMAIL
 searchPhrases = {
 'Entry level': 50, 
 
-'Flask': 25,
+'Flask': 25, 'Junior': 25, 'Jr': 25,
 
-'Junior': 10, 'Jr': 10, 'Portland': 10, 'Oregon': 10, ', OR': 10, 'Eugene': 10, 'San Francisco': 10, 'Los Angeles': 10, 'Santa Monica': 10, 'Marina del Rey': 10, 'Venice': 10, 'Long Beach': 10, 'Pasadena': 10, 'Irvine': 10, 'Silicon Valley': 10, 'San Jose': 10, 'California': 10, ', CA': 10, 'Seattle': 10, 'Washington': 10, ', WA': 10, 'New York': 10, 'NYC': 10,
+'Portland': 10, 'Oregon': 10, ', OR': 10, 'Eugene': 10, 'San Francisco': 10, 'Los Angeles': 10, 'Santa Monica': 10, 'Marina del Rey': 10, 'Venice': 10, 'Long Beach': 10, 'Pasadena': 10, 'Irvine': 10, 'Silicon Valley': 10, 'San Jose': 10, 'California': 10, ', CA': 10, 'Seattle': 10, 'Washington': 10, ', WA': 10, 'New York': 10, 'NYC': 10,
 
 'No longer accepting applications': -1000, 'You applied on': -1000,
 
-'Lead Python Developer': -50, 'Lead Developer': -50, 'Lead Software Developer': -50, 'Lead Software Engineer': -50, 'Network Architect': -50, 'Cloud Technical Solutions Engineer': -50,'Ruby on Rails Fullstack Engineer': -50, 'Ruby on Rails Developer': -50, 'Clearance': -50, 'Active SECRET': -50, '7+ years': -50, '6+ years': -50, '5+ years': -50, 'Minimum of 5 years': -50, 'Mid-Level': -50, 'Mid-Senior': -50, 'Senior Python': -50, 'Senior Data': -50, 'Senior Full Stack': -50, 'Senior Backend': -50, 'Microsoft Dynamics': -50, 'Hardware Technician': -50, 'Linux System administrator': -50, 'Embedded Software': -50, 'Engineer III': -50, 'Engineer IV': -50, 'Engineer V': -50, 'Engineer VI': -50, 'Engineer VII': -50,
+'Battery Engineer': -100, 'active TS clearance': -100, 'Staff Backend Engineer': -100,
 
-'Systems Engineering': -25, 'Solutions Engineer': -25, 'Network Developer': -25, 'Network Engineer': -25, 'Data Engineer': -25, 'Data Science': -25, 'Talend': -25, 'ERP': -25, '4+ years': -25, 'Front End Developer': -25, 'Frontend Web': -25, 'Fintech': -25, 'Trading': -25, 'Wall Street': -25, 'DevOps': -25, 'Qlik': -25, 'Engineer Infrastructure': -25, 'Cloud engineer': -25,
+'Lead Python Developer': -50, 'Lead Developer': -50, 'Lead Software Developer': -50, 'Lead Software Engineer': -50, 'Technology Lead': -50, 'Network Architect': -50, 'Cloud Technical Solutions Engineer': -50,'Ruby on Rails Fullstack Engineer': -50, 'Ruby on Rails Developer': -50, 'Clearance': -50, 'Active SECRET': -50, '7+ years': -50, '6+ years': -50, '5+ years': -50, 'Minimum of 5 years': -50, 'Mid-Level': -50, 'Mid-Senior': -50, 'Senior Python': -50, 'Senior Data': -50, 'Senior Full Stack': -50, 'Senior Backend': -50, 'Microsoft Dynamics': -50, 'Hardware Technician': -50, 'Linux System administrator': -50, 'Embedded Software': -50, 'Engineer III': -50, 'Engineer IV': -50, 'Engineer V': -50, 'Engineer VI': -50, 'Engineer VII': -50, 'Principal Software': -50, 'Security Engineer': -50, 'Senior DevOps': -50,
 
-'Application Development': -10, 'Blockchain': -10, 'Crypto': -10, 'Quant': -10, 'ETL Developer': -10, 'React': -10, 'React Native': -10, 'C++': -10, 'PHP': -10, 'Trading': -10, 'Hedge Fund': -10, 'Java': -10, 'Jr.Java': -10, 'Web Developer': -10, 'WordPress': -10, 'Shopify': -10, '3-4 years': -10,'Engineer II': -10, 'Sports Betting': -10, 'Developer Mobile App': -10,
+'Systems Engineering': -25, 'Solutions Engineer': -25, 'Network Developer': -25, 'Network Engineer': -25, 'Data Engineer': -25, 'Data Science': -25, 'Talend': -25, 'ERP': -25, '4+ years': -25, 'Front End Developer': -25, 'Frontend Web': -25, 'Fintech': -25, 'Trading': -25, 'Wall Street': -25, 'DevOps': -25, 'Qlik': -25, 'Engineer Infrastructure': -25, 'Cloud engineer': -25, 'AWS Lead': -25, 'Computer Scientist': -25,
+
+'Application Development': -10, 'Blockchain': -10, 'Crypto': -10, 'Quant': -10, 'ETL Developer': -10, 'React': -10, 'React Native': -10, 'C++': -10, 'PHP': -10, 'Trading': -10, 'Hedge Fund': -10, 'Java': -10, 'Jr.Java': -10, 'Web Developer': -10, 'WordPress': -10, 'Shopify': -10, '3-4 years': -10,'Engineer II': -10, 'Sports Betting': -10, 'Developer Mobile App': -10, 'Container': -10,
 
 'React': -5, 'Vue': -5, 'Angular': -5, 'Cassandra': -5, 'Node': -5, '.NET': -5, 'JavaScript Developer': -5, 'Associate': -5 
 }
 
 listings = []
 
-URLs = ["https://www.linkedin.com/jobs/search/?f_E=1%2C2%2C3&f_LF=f_AL&f_TPR=r86400&geoId=103644278&keywords=python%20developer%20-senior%20-sr%20-mid-senior&location=United%20States",
-"https://www.python.org/jobs/", 
-"https://www.ziprecruiter.com/candidate/search?radius=5000&days=1&search=Python+-senior+-devops+-etl+-j2ee+-%22data+engineer%22+-%22data+scientist%22+-%22technical+writer%22+-wix+-%22systems+engineer%22+-FPGA+-director+-principal+-%22reliability+engineer%22&location=Omaha%2C+NE"
-]
+URLs = ["https://www.ziprecruiter.com/candidate/search?radius=5000&days=1&search=Python+-senior+-devops+-etl+-j2ee+-%22data+engineer%22+-%22data+scientist%22+-%22technical+writer%22+-wix+-%22systems+engineer%22+-FPGA+-director+-principal+-%22reliability+engineer%22&location=Omaha%2C+NE"]#,
+# "https://www.linkedin.com/jobs/search/?f_E=1%2C2%2C3&f_LF=f_AL&f_TPR=r86400&geoId=103644278&keywords=python%20developer%20-senior%20-sr%20-mid-senior&location=United%20States",
+# "https://www.python.org/jobs/"
+# ]
 
 scrapedJobsFilename = "scrapedJobs.txt"
 
@@ -46,7 +48,7 @@ jobs = {}
 # scores = []
 scrapedJobs = []
 
-def readInReturnDelimitedTextFileToDataStructure(directory, filename):
+def readInReturnDelimitedTextFileToDataStructure(directory: str, filename: str):
     listFromFile = []
     dictionaryFromFile = {}
         
@@ -84,12 +86,12 @@ def writeOutDataStructureToReturnDelimitedTextFile(directory, filename, dataStru
 scrapedJobs = readInReturnDelimitedTextFileToDataStructure('', scrapedJobsFilename)
 
 for URL in URLs:
-    if "www.ziprecruiter.com" in URL:
-        (jobs, scrapedJobs) = zipRecruiterMetaSearch(URL, jobs, scrapedJobs)
     if "www.linkedin.com" in URL:
         (jobs, scrapedJobs) = linkedInMetaSearch(URL, jobs, scrapedJobs)
     if "www.python.org" in URL:
         (jobs, scrapedJobs) = pythonDotOrgMetaSearch(URL, jobs, scrapedJobs)
+    if "www.ziprecruiter.com" in URL:
+        (jobs, scrapedJobs) = zipRecruiterMetaSearch(URL, jobs, scrapedJobs)# -> Tuple[Dict[int, str, str, str, str, str, str, str], List[str]]
 
 writeOutDataStructureToReturnDelimitedTextFile('', 'scrapedJobs.txt', scrapedJobs)
 
@@ -142,10 +144,16 @@ def sendEMail():
 
 # print(li_123.location)
 
-
+# def main():
+    # print(f"\n{jobs.keys()}\n")
 for id in jobs.keys():
     # print(f"{listing[2] = } {listing[1] = } {listing[3] = }")
     score, link, title, company, datePosted, location, fullText = jobs[id][0], jobs[id][1], jobs[id][2], jobs[id][3], jobs[id][4], jobs[id][5], jobs[id][6]
+
+    print("\n" * 2)
+    print(id[:35], company, jobs[id][3])
+    print(jobs[id])
+    print("\n" * 2)
     # score, title = jobs[id][0], jobs[id][2]
     # id = [score, link, title, company, datePosted, location, fullText]
 
@@ -223,49 +231,7 @@ for id in jobs.keys():
 
 print('\n')
 
-# for job in sorted(jobs.items(), key=lambda x: x[1][0], reverse = True):
-#     print(job)
-
-# print(jobs)
-# print("\n" * 5)
-
-# jobIDs = [jobs[x] for x in sorted(jobs.keys(), key = lambda x: jobs[x][0], reverse = True)][:10]
-# print(jobIDs)
-
 sendEMail()
 
-# print(key, value) for (key, value) in sorted(orders.items(), key=lambda x: x[1]
-
-# for jobID in jobIDs:
-#     print(f"({jobs[jobID][0]}) <a href='{jobs[jobID][4]}'>{jobs[jobID][2]}</a> at {jobs[jobID][3]} in {jobs[jobID][6]} posted {jobs[jobID][5]} ({jobs[jobID][1]}")
-
-# print(listings)
-
-# print('\n')
-# jobs.sort(key = lambda listing: listing[0], reverse = True)
-# print(listings)
-
-# print('\n')
-# for listing in listings:#[:10]:
-#     score, id, title, company, link, datePosted, location = listing[0], listing[1], listing[2], listing[3], listing[4], listing[5], listing[6]
-#     print(f"{score} - <a href='{link}'>{title}</a> at {company} in {location}")
-
-
-#     # location = listing.find("span",  class_="job-result-card__location").contents[0]
-#     # print(location)
-#     # jobTitleDisqualifications = ['Lead Python Developer', 'Lead Developer', 'Architect']
-#     # for jobTitleDisqualification in jobTitleDisqualifications:
-#     #     if jobTitleDisqualification in jobTitle:
-#     #         print("... -10 points")
-#             # break
-            
-#     # checkSeniorityLevel(jobLink)
-
-#     # print(soup.prettify())
-#     # print(listings[0].prettify())
-
-#     print("Finished this round.")
-
-#     webbrowser.open(URL, new = 2)
-
-#     sleep(randint(10, 60))
+# if __name__ == "__main__":
+#     main()

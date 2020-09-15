@@ -78,7 +78,7 @@ def zipRecruiterIndividualJobScraper(link):
         if datePosted == 0:
             print(f"Found datePosted as {datePosted}\n")
             print(soup.get_text())
-    except AttributeError as e:
+    except (AttributeError, IndexError) as e:
         print(f'{e}: no datePosted for {link}')
         datePosted = "99999 hours ago"
 

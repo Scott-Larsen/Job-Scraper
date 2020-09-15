@@ -15,59 +15,77 @@ def zipRecruiterMetaSearch(URL, jobs, scrapedJobs):
     # options = Options()  
     # options.add_argument("--headless")  
     # try:
-    driver = webdriver.Chrome()#options = options)
-
+    driver = webdriver.Chrome('/Users/Scott/Desktop/DATA/SORT/CodingProgrammingPython/jobScraper/chromedriver')#options = options)
     # URLs = []
 
     driver.get(URL)
-    sleep(40)
+    sleep(randint(3, 10))
     print("\nDoing a metascrape of jobs on ZipRecruiter:")
     jobListings = driver.find_elements_by_xpath("//div[@ class='job_content']")
         
     # print(webAttributeLinks[0])
-    for jobListing in jobListings:
+    # for i, jobListing in enumerate(jobListings[:3]):
+    for jobListing in jobListings[:2]:
         # html = (jobListing.get_attribute('innerHTML'))
 
+        print("\n", jobListing.get_attribute('innerHTML'), "\n")
+
+        # print("\n" * 10)
         # print(jobListing.get_attribute('innerHTML'))
         # print("\n" * 4)
-        
-        # print("\n" * 10)
+        # titles = (jobListing.find_elements_by_xpath("//a[@class='t_org_link name']"))
+        # for title in titles:
+        #     print("")
+        #     print(title.get_attribute('innerHTML'))
+
         id = link = jobListing.find_element_by_css_selector('a.job_link').get_attribute('href')
 
-        if id in scrapedJobs:
-            break
-        else:
+        if id not in scrapedJobs:
             scrapedJobs.insert(0, id)
 
-        # print(f"About to scrape {link}")
+            # print(f"About to scrape {link}")
 
-        score = 1000
+            score = 1000
 
-        title = jobListing.find_element_by_css_selector('span.just_job_title').get_attribute('innerHTML')
+            title = jobListing.find_element_by_css_selector('span.just_job_title').get_attribute('innerHTML')
 
-        company = jobListing.find_element_by_xpath("//a[@class='t_org_link name']").get_attribute('innerHTML')
+            # company = None
+            # print(f"\n{company = }\n")
 
-        # datePosted = jobListing.find
+            company = jobListing.find_element_by_xpath("//a[@class='t_org_link name']").get_attribute('innerHTML')
+            print(f"\n{title = }")
+            print(f"{company = }\n")
+            # print(f"\n{company = }\n")
+            
+            # if company == None:
+            #     print(f"\n\n{jobListing}\n")
 
-        location = jobListing.find_element_by_xpath("//a[@class='t_location_link location']").get_attribute('innerHTML')
+            # datePosted = jobListing.find
+            # locations = jobListing.find_elements_by_xpath("//a[@class='t_location_link location']")#.get_attribute('innerHTML')
+            # print(f"{len(locations) = }")
+            # for l in locations:
+            #     print(l.get_attribute('innerHTML'))
 
-        abridgedText = jobListing.find_element_by_xpath("//p[@class='job_snippet']/a").get_attribute('innerHTML').strip()
+            location = jobListing.find_element_by_xpath("//a[@class='t_location_link location']").get_attribute('innerHTML')
 
-        # linkedText = jobListing.find_element_by_xpath("//p[@class='job_snippet']/a").get_attribute('href')
+            abridgedText = jobListing.find_element_by_xpath("//p[@class='job_snippet']/a").get_attribute('innerHTML').strip()
 
-        print(f"Scraping {title} at {company}")
-        
-        fullText, datePosted = zipRecruiterIndividualJobScraper(link)
+            # linkedText = jobListing.find_element_by_xpath("//p[@class='job_snippet']/a").get_attribute('href')
 
-        if fullText == False:
-            fullText = abridgedText
+            print(f"Scraping {title} at {company}")
+            
+            fullText, datePosted = zipRecruiterIndividualJobScraper(link)
 
-        # print(f"{link = }")
-        # print(f"{linkedText = }")
-        # print(f"{fullText = }")
-        # print(f"{datePosted = }")
+            if fullText == False:
+                fullText = abridgedText
 
-        jobs[id] = [score, link, title, company, datePosted, location, fullText]
+            # print(f"{link = }")
+            # print(f"{linkedText = }")
+            # print(f"{fullText = }")
+            # print(f"{datePosted = }")
+            # print(f"\n\n{score = }{link = }{title = }{company = }{datePosted = }{location = }")
+
+            jobs[id] = [score, link, title, company, datePosted, location, fullText]
 
     return jobs, scrapedJobs
 
@@ -82,3 +100,4 @@ def zipRecruiterMetaSearch(URL, jobs, scrapedJobs):
 
     # finally:
     #     driver.quit()
+# listing = "https://wwww.ziprecruiter.com/ojob/5cf2c67c609f42e5592a229742a76a0b?lvk=JGihlMSN-VwH1Fxhb8qRlQ.--LibjKiDJZ"
