@@ -14,7 +14,6 @@ from pythonDotOrgJobBoardScraper import pythonDotOrgMetaSearch
 from zipRecruiterJobBoardScraper import zipRecruiterMetaSearch
 from credentials import USER, PASS, EMAIL
 
-# 'Python': 50, 'Python Developer': 50,
 searchPhrases = {
 'Entry level': 50, 
 
@@ -37,16 +36,85 @@ searchPhrases = {
 
 listings = []
 
-URLs = ["https://www.ziprecruiter.com/candidate/search?radius=5000&days=1&search=Python+-senior+-devops+-etl+-j2ee+-%22data+engineer%22+-%22data+scientist%22+-%22technical+writer%22+-wix+-%22systems+engineer%22+-FPGA+-director+-principal+-%22reliability+engineer%22&location=Omaha%2C+NE"]#,
-# "https://www.linkedin.com/jobs/search/?f_E=1%2C2%2C3&f_LF=f_AL&f_TPR=r86400&geoId=103644278&keywords=python%20developer%20-senior%20-sr%20-mid-senior&location=United%20States",
-# "https://www.python.org/jobs/"
-# ]
+URLs = ["https://www.ziprecruiter.com/candidate/search?radius=5000&days=1&search=Python+-senior+-devops+-etl+-j2ee+-%22data+engineer%22+-%22data+scientist%22+-%22technical+writer%22+-wix+-%22systems+engineer%22+-FPGA+-director+-principal+-%22reliability+engineer%22&location=Omaha%2C+NE",
+"https://www.linkedin.com/jobs/search/?f_E=1%2C2%2C3&f_LF=f_AL&f_TPR=r86400&geoId=103644278&keywords=python%20developer%20-senior%20-sr%20-mid-senior&location=United%20States",
+"https://www.python.org/jobs/"
+]
 
 scrapedJobsFilename = "scrapedJobs.txt"
 
-jobs = {}
-# scores = []
-scrapedJobs = []
+
+def main():
+
+    jobs = {}
+    scrapedJobs = []
+    
+    scrapedJobs = readInReturnDelimitedTextFileToDataStructure('', scrapedJobsFilename)
+
+    for URL in URLs:
+        if "www.linkedin.com" in URL:
+            (jobs, scrapedJobs) = linkedInMetaSearch(URL, jobs, scrapedJobs)
+        if "www.python.org" in URL:
+            (jobs, scrapedJobs) = pythonDotOrgMetaSearch(URL, jobs, scrapedJobs)
+        if "www.ziprecruiter.com" in URL:
+            (jobs, scrapedJobs) = zipRecruiterMetaSearch(URL, jobs, scrapedJobs)# -> Tuple[Dict[int, str, str, str, str, str, str, str], List[str]]
+
+    writeOutDataStructureToReturnDelimitedTextFile('', 'scrapedJobs.txt', scrapedJobs)
+
+    for id in jobs.keys():
+        score, link, title, company, datePosted, location, fullText = jobs[id][0], jobs[id][1], jobs[id][2], jobs[id][3], jobs[id][4], jobs[id][5], jobs[id][6]
+
+        print("\n" * 2)
+        print(id[:35], company, jobs[id][3])
+        print(jobs[id])
+        print("\n" * 2)
+        print(f"\nEvaluating {title} at {company} ({id}).")
+
+        print(f"{datePosted = }")
+
+        try:
+            if "yesterday" in datePosted:
+                ageInDays = 1
+            elif "just now" in datePosted:
+                ageInDays = 0
+            elif "hours ago" in datePosted or "hour ago" in datePosted:
+                ageInDays = float(datePosted.split()[0]) / 24
+            else:
+                datetimePosted = parser.parse(datePosted)
+                
+                age = datetime.now().timestamp() - datetimePosted.timestamp()
+                ageInDays = int(age / 24 / 60 / 60)
+        except parser.ParserError as e:
+            print(f"{e}: {datePosted} couldn't be parsed properly from {link}")
+            ageInDays = 0
+
+        print(f"{ageInDays = }")
+
+        ageReduction = int(ageInDays ** 2)
+        score -= ageReduction
+        if ageReduction > 0:
+            print(f"... docking {ageReduction} from the score ({score}) because the listing is {ageInDays} days old.")
+
+        for searchPhrase in searchPhrases.keys():
+            if searchPhrase.lower() in title.lower():
+
+                scoreAdjustment = 2 * searchPhrases[searchPhrase]
+                score += scoreAdjustment
+                if scoreAdjustment > 0:
+                    scoreAdjustment = '+' + str(scoreAdjustment)
+                print(f"... {scoreAdjustment} points ({score}) for {searchPhrase} being in {title}.")
+            if searchPhrase.lower() in fullText.lower():
+                scoreAdjustment = searchPhrases[searchPhrase]
+                score += scoreAdjustment
+                if scoreAdjustment > 0:
+                    scoreAdjustment = '+' + str(scoreAdjustment)
+                print(f"... {scoreAdjustment} points ({score}) for {searchPhrase} being in the text of the listing.")
+        jobs[id][0] = score
+
+    print('\n')
+
+    sendEMail(jobs)
+
 
 def readInReturnDelimitedTextFileToDataStructure(directory: str, filename: str):
     listFromFile = []
@@ -55,8 +123,6 @@ def readInReturnDelimitedTextFileToDataStructure(directory: str, filename: str):
     if os.path.exists(directory + filename):
         print(f"Opening {filename} and writing it into a data structure....\n")
 
-        # open file and read the content in a list
-        # print(directory + filename)
         with open(directory + filename, 'r') as filehandle:
             for line in filehandle:
                 currentLine = line[:-1]
@@ -83,19 +149,9 @@ def writeOutDataStructureToReturnDelimitedTextFile(directory, filename, dataStru
             elif isinstance(dataStructureToBeWrittenOut, dict):
                 filehandle.writelines(f"{key} {dataStructureToBeWrittenOut[key]}\n" for key in dataStructureToBeWrittenOut.keys())
 
-scrapedJobs = readInReturnDelimitedTextFileToDataStructure('', scrapedJobsFilename)
 
-for URL in URLs:
-    if "www.linkedin.com" in URL:
-        (jobs, scrapedJobs) = linkedInMetaSearch(URL, jobs, scrapedJobs)
-    if "www.python.org" in URL:
-        (jobs, scrapedJobs) = pythonDotOrgMetaSearch(URL, jobs, scrapedJobs)
-    if "www.ziprecruiter.com" in URL:
-        (jobs, scrapedJobs) = zipRecruiterMetaSearch(URL, jobs, scrapedJobs)# -> Tuple[Dict[int, str, str, str, str, str, str, str], List[str]]
-
-writeOutDataStructureToReturnDelimitedTextFile('', 'scrapedJobs.txt', scrapedJobs)
-
-def sendEMail():
+def sendEMail(jobs):
+    jobs = jobs
     server = smtplib.SMTP("smtp.gmail.com", 587)
     server.ehlo()
     server.starttls()
@@ -108,15 +164,7 @@ def sendEMail():
     body = ""
     jobIDs = [jobs[x] for x in sorted(jobs.keys(), key = lambda x: jobs[x][0], reverse = True)][:25]
     for jobID in jobIDs:
-
-        # body += f"({jobID[0]}) <a href='{jobID[4]}'>{jobID[2]}</a> at {jobID[3]} in {jobID[6]} posted {jobID[5]} ({jobID[1]})\n"
         body += f"({jobID[0]}) {jobID[2]} at {jobID[3]} in {jobID[5]} posted {jobID[4][5:11]}\n{jobID[1]}\n... {jobID[6][100:500]} ...\n\n\n"
-        # [score, id, title, company, link, datePosted, location]
-        # id = [score, link, title, company, datePosted, location, fullText] #, description, restrictions, requirements, about, contact, seniorityLevel]
-        # id = [0score, 1link, 2title, 3company, 4datePosted, 5location, 6fullText]
-    # print(body)
-    # body = body.encode('utf-8').strip()
-    # body = body.encode('utf-8')
     if len(body) == 0:
         body += "\nNo results."
     body = body.encode('ascii', 'ignore').decode('ascii') # last working
@@ -130,108 +178,5 @@ def sendEMail():
 
     server.quit()
 
-# class Job:
-#     def __init__(self, score, title, applicationDate, datePosted, location):
-#         self.score = score
-#         # self.id = id
-#         self.title = title
-#         self.applicationDate = applicationDate
-#         self.datePosted = datePosted
-#         self.location = location
-
-
-# li_123 = Job(51, 'Dev', 'February', 'March', 'Paris')
-
-# print(li_123.location)
-
-# def main():
-    # print(f"\n{jobs.keys()}\n")
-for id in jobs.keys():
-    # print(f"{listing[2] = } {listing[1] = } {listing[3] = }")
-    score, link, title, company, datePosted, location, fullText = jobs[id][0], jobs[id][1], jobs[id][2], jobs[id][3], jobs[id][4], jobs[id][5], jobs[id][6]
-
-    print("\n" * 2)
-    print(id[:35], company, jobs[id][3])
-    print(jobs[id])
-    print("\n" * 2)
-    # score, title = jobs[id][0], jobs[id][2]
-    # id = [score, link, title, company, datePosted, location, fullText]
-
-    print(f"\nEvaluating {title} at {company} ({id}).")
-    # print(link)
-
-
-    # try:
-    # print(f"{datePosted = }, {type(datePosted) = }")
-    # if len(datePosted) == 8:
-    #     dateFormat = "%H:%M:%S"
-    # elif len(datePosted) == 32: 
-    #     # 2020-08-21T11:34:29.849639+00:00) 26 32
-    #     # 2020-08-21T11:34:29.849639+00:00
-    #     # datePosted = "2020-08-21T11:34:29.849639+00:00" # ) #26 32
-    #     # datePosted = "11:34:29"
-    #     dateFormat = "%Y-%m-%dT%H:%M:%S.%f+%z"
-    # # dateFormat = "%H:%M:%S"
-    # print(f"{datePosted = }, {dateFormat = }")
-    # datetimePosted = datetime.strptime(datePosted, dateFormat)
-
-    print(f"{datePosted = }")
-
-    # if isinstance(datePosted, str):
-    try:
-        if "yesterday" in datePosted:
-            ageInDays = 1
-        elif "just now" in datePosted:
-            ageInDays = 0
-        elif "hours ago" in datePosted or "hour ago" in datePosted:
-            ageInDays = float(datePosted.split()[0]) / 24
-        else:
-            datetimePosted = parser.parse(datePosted)
-            # print(datetimePosted)
-            # print(f"{datetimePosted = }")
-            # except:
-            #     print(f"datetime.strptime failed - {datePosted = }")
-            #     pass
-            
-            age = datetime.now().timestamp() - datetimePosted.timestamp()
-            # print(f"{age = }")
-            ageInDays = int(age / 24 / 60 / 60)
-    except parser.ParserError as e:
-        print(f"{e}: {datePosted} couldn't be parsed properly from {link}")
-        ageInDays = 0
-
-    print(f"{ageInDays = }")
-
-    # print(f"{ageInDays = }")
-    ageReduction = int(ageInDays ** 2)
-    score -= ageReduction
-    if ageReduction > 0:
-        print(f"... docking {ageReduction} from the score ({score}) because the listing is {ageInDays} days old.")
-
-    for searchPhrase in searchPhrases.keys():
-        if searchPhrase.lower() in title.lower():
-            # positiveNegative = -1 if searchPhrases[searchPhrase] < 0 else 1
-            scoreAdjustment = 2 * searchPhrases[searchPhrase]
-            score += scoreAdjustment
-            if scoreAdjustment > 0:
-                scoreAdjustment = '+' + str(scoreAdjustment)
-            print(f"... {scoreAdjustment} points ({score}) for {searchPhrase} being in {title}.")
-        if searchPhrase.lower() in fullText.lower():
-            # positiveNegative = -1 if searchPhrases[searchPhrase] < 0 else 1
-            scoreAdjustment = searchPhrases[searchPhrase]
-            score += scoreAdjustment
-            if scoreAdjustment > 0:
-                scoreAdjustment = '+' + str(scoreAdjustment)
-            print(f"... {scoreAdjustment} points ({score}) for {searchPhrase} being in the text of the listing.")
-
-#     # TODO if searchPhrase in jobDescription
-
-    # listing = list(listing)
-    jobs[id][0] = score
-
-print('\n')
-
-sendEMail()
-
-# if __name__ == "__main__":
-#     main()
+if __name__ == "__main__":
+    main()
