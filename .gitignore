@@ -1,2 +1,10 @@
 .DS_Store
 credentials.py
+chromedriver
+jobScraper.code-workspace
+pyvenv.cfg
+query_utilities.py
+bin/
+include/
+lib/
+__pycache__/
