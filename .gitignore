@@ -9,3 +9,10 @@ include/
 lib/
 __pycache__/
 chromedriver
+
+
+# Not yet implemented
+diceJobBoardScraper.py
+diceIndividualJobScraper.py
+pythonJobsHQJobBoardScraper.py
+pythonJobsHQIndividualJobScraper.py
