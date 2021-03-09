@@ -13,13 +13,7 @@ def zipRecruiterIndividualJobScraper(link):
     try:
         forwardedLinkText = urlopen(forwardedLink, timeout=10).read()
 
-        # print(f"\n\n{forwardedLinkText = }\n{forwardedLink = }\n\n")
-
         if b"linkedin.com/jobs/view/" in forwardedLinkText or b"dice.com/jobs/detail/" in forwardedLinkText:
-            
-            # print(f"\n{forwardedLinkText = }\n")
-
-            # print(f"This job is from another site:\n{urlopen(forwardedLink).read()}\n")
 
             forwardedLinkURL = urlopen(forwardedLink).read()
             print(f"{forwardedLinkURL = }")
@@ -33,9 +27,6 @@ def zipRecruiterIndividualJobScraper(link):
             forwardedLinkURL = 'http' + s
 
             print(f"This job is from another site:\n{forwardedLinkURL}")
-
-
-            # print(f"\n{urlopen(forwardedLink).read() = }\n")
 
 
             return "", "99999 hours ago"

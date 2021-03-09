@@ -1,28 +1,17 @@
-# If you get an error about chromedriver versions run the following command and download the corresponding version of chromdriver as chrome (https://chromedriver.chromium.org/downloads).  Save chromedriver to project folder"
-# brew upgrade chromedriver
+# If you get an error about chromedriver missing (or mismatched versions) download the same version of chromedriver as you have of Chrome on your computer.  You might as well make sure Chrome is updated and then get chromedriver from https://chromedriver.chromium.org/downloads .
 
-# import requests
-# from bs4 import BeautifulSoup
-from time import sleep
 import pytz
-from random import randint
 import smtplib
 import os.path
 import pytz
 from datetime import datetime
 from dateutil import parser
-from yaml import safe_load
 from sys import path
 from linkedInJobBoardScraper import linkedInMetaSearch
 from pythonDotOrgJobBoardScraper import pythonDotOrgMetaSearch
 from zipRecruiterJobBoardScraper import zipRecruiterMetaSearch
-from credentials import USER, PASS, EMAIL
-
-
-config = safe_load(open(os.path.join(path[0], "config.yml")))
-
-searchPhrases = config["searchPhrases"]
-URLs = config["URLs"]
+from credentials import EMAIL, PASS
+from config import searchPhrases, URLs
 
 listings = []
 
@@ -122,19 +111,19 @@ def readInReturnDelimitedTextFileToDataStructure(directory: str, filename: str):
     listFromFile = []
     dictionaryFromFile = {}
 
-    if os.path.exists(directory + filename):
-        print(f"Opening {filename} and writing it into a data structure....\n")
+    if not os.path.exists(directory + filename):
+        with open(directory + filename, "w") as filehandle:
+            pass
+    print(f"Opening {filename} and writing it into a data structure....\n")
+    with open(directory + filename, "r") as filehandle:
+        for line in filehandle:
+            currentLine = line[:-1]
+            if " " in currentLine:
+                currentLine = currentLine.split()
+                dictionaryFromFile[currentLine[0]] = int(currentLine[1])
+            else:
+                listFromFile.append(currentLine)
 
-        with open(directory + filename, "r") as filehandle:
-            for line in filehandle:
-                currentLine = line[:-1]
-                if " " in currentLine:
-                    currentLine = currentLine.split()
-                    dictionaryFromFile[currentLine[0]] = int(currentLine[1])
-                else:
-                    listFromFile.append(currentLine)
-    else:
-        print(f"{directory + filename} doesn't exist")
     if len(listFromFile) >= len(dictionaryFromFile):
         dataStructureToReturn = listFromFile
     else:
@@ -167,7 +156,7 @@ def sendEMail(jobs):
     server.starttls()
     server.ehlo()
 
-    server.login(USER, PASS)
+    server.login(EMAIL, PASS)
 
     subject = f"Job Scraper Results"
 

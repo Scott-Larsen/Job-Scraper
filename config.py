@@ -1,11 +1,14 @@
-URLs: [
+# Go to each of these sites and do a job search with whichever parameters you want.  Copy the URL you get and replace the ones below. I've only developed scrapers for the three sites so far.  The script will ideally run every day so try to limit job postings to the last 24 hours
+URLs = [
     "https://www.ziprecruiter.com/candidate/search?radius=5000&days=1&search=Python+-senior+-devops+-etl+-j2ee+-%22data+engineer%22+-%22data+scientist%22+-%22technical+writer%22+-wix+-%22systems+engineer%22+-FPGA+-director+-principal+-%22reliability+engineer%22&location=Omaha%2C+NE",
     "https://www.linkedin.com/jobs/search/?f_E=1%2C2%2C3&f_LF=f_AL&f_TPR=r86400&geoId=103644278&keywords=python%20developer%20-senior%20-sr%20-mid-senior&location=United%20States",
     "https://www.python.org/jobs/",
-    "https://www.linkedin.com/jobs/search/?f_E=1%2C2%2C3&f_LF=f_AL&f_TPR=r604800&geoId=103644278&keywords=python%20developer%20-senior%20-sr%20-mid-senior&location=United%20States",
 ]
 
-searchPhrases: {
+# "https://www.linkedin.com/jobs/search/?f_E=1%2C2%2C3&f_LF=f_AL&f_TPR=r604800&geoId=103644278&keywords=python%20developer%20-senior%20-sr%20-mid-senior&location=United%20States",
+
+# Customize the following terms and scores where positive traits correlate with positive numbers and negative with negative numbers.  The job listings will be "scored" and the 10 best will be e-mailed to you.
+searchPhrases = {
     "Entry level": 50,
     "Flask": 25,
     "Junior": 25,
