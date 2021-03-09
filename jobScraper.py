@@ -1,4 +1,4 @@
-# If you get an error about chromedriver missing (or mismatched versions) download the same version of chromedriver as you have of Chrome on your computer.  You might as well make sure Chrome is updated and then get chromedriver from https://chromedriver.chromium.org/downloads .
+# If you get an error about chromedriver missing (or mismatched versions) download the same version of chromedriver as you have of Chrome on your computer. You might as well make sure Chrome is updated and then get that version's chromedriver from https://chromedriver.chromium.org/downloads .
 
 import pytz
 import smtplib
@@ -114,6 +114,7 @@ def readInReturnDelimitedTextFileToDataStructure(directory: str, filename: str):
     if not os.path.exists(directory + filename):
         with open(directory + filename, "w") as filehandle:
             pass
+
     print(f"Opening {filename} and writing it into a data structure....\n")
     with open(directory + filename, "r") as filehandle:
         for line in filehandle:
