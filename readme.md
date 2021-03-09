@@ -1,6 +1,6 @@
 # jobScraper - A job site scraper built using Python
 
-This app is designed to check job websites daily and e-mail you the 10 best listings according to keywords that you set. So far scrapers are built to work on LinkedIn, ZipRecruiter and Python.org. Please reach out if you'd like to add more or if this very limited documentation is not enough to get you started (I'd genuinely love to help/ know that someone else is benefitting from it). Here are the steps to get things working.
+This app is designed to check job websites daily and e-mail you the 10 best listings according to keywords that you set. So far scrapers are built to work on [LinkedIn](https://www.linkedin.com/jobs), [ZipRecruiter](https://www.ziprecruiter.com) and [Python.org](python.org/jobs/). Please reach out if you'd like to add more or if this very limited documentation is not enough to get you started (I'd genuinely love to help/ know that someone else is benefitting from it). Here are the steps to get things working.
 
 - Fork and clone the project, first to your GitHub and then to your desktop. You can follow GitHub's documentation here - https://docs.github.com/en/github/getting-started-with-github/fork-a-repo .
 - Pip install the requirements by running the following in your terminal (from within your version's directory).
