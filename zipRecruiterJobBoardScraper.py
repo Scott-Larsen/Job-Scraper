@@ -1,5 +1,6 @@
 from time import sleep
 from random import randint
+from pathlib import Path
 from zipRecruiterIndividualJobScraper import zipRecruiterIndividualJobScraper
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -9,7 +10,8 @@ from selenium.common.exceptions import NoSuchElementException
 def zipRecruiterMetaSearch(URL, jobs, scrapedJobs):
 
     driver = webdriver.Chrome(
-        "/Users/Scott/Desktop/DATA/SORT/CodingProgrammingPython/jobScraper/chromedriver"
+        Path.cwd()
+        / "chromedriver"  # "/Users/Scott/Desktop/DATA/SORT/CodingProgrammingPython/jobScraper/chromedriver"
     )
 
     driver.get(URL)
@@ -60,4 +62,3 @@ def zipRecruiterMetaSearch(URL, jobs, scrapedJobs):
             jobs[id] = [score, link, title, company, datePosted, location, fullText]
 
     return jobs, scrapedJobs
-
