@@ -1,17 +1,18 @@
 from time import sleep
 from random import randint
 from pathlib import Path
-from zipRecruiterIndividualJobScraper import zipRecruiterIndividualJobScraper
+from ziprecruiter_individual_job_scraper import ziprecruiter_individual_job_scraper
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import NoSuchElementException
 
 
-def zipRecruiterMetaSearch(URL, jobs, scrapedJobs):
+def ziprecruiter_meta_search(URL, jobs, scraped_jobs):
+    """Does a meta search of the job board, reaches out to individual job scraper and returns job details"""
 
     driver = webdriver.Chrome(
         Path.cwd()
-        / "chromedriver"  # "/Users/Scott/Desktop/DATA/SORT/CodingProgrammingPython/jobScraper/chromedriver"
+        / "chromedriver"  # "/Users/Scott/Desktop/DATA/SORT/CodingProgrammingPython/job_scraper/chromedriver"
     )
 
     driver.get(URL)
@@ -25,8 +26,8 @@ def zipRecruiterMetaSearch(URL, jobs, scrapedJobs):
             "href"
         )
 
-        if id not in scrapedJobs:
-            scrapedJobs.insert(0, id)
+        if id not in scraped_jobs:
+            scraped_jobs.insert(0, id)
 
             score = 1000
 
@@ -54,11 +55,11 @@ def zipRecruiterMetaSearch(URL, jobs, scrapedJobs):
 
             print(f"Scraping {title} at {company}")
 
-            fullText, datePosted = zipRecruiterIndividualJobScraper(link)
+            full_text, date_posted = ziprecruiter_individual_job_scraper(link)
 
-            if fullText == False:
-                fullText = abridgedText
+            if full_text == False:
+                full_text = abridgedText
 
-            jobs[id] = [score, link, title, company, datePosted, location, fullText]
+            jobs[id] = [score, link, title, company, date_posted, location, full_text]
 
-    return jobs, scrapedJobs
+    return jobs, scraped_jobs

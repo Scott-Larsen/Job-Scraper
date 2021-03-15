@@ -1,19 +1,19 @@
 .DS_Store
 credentials.py
 chromedriver
-jobScraper.code-workspace
+job_scraper.code-workspace
 pyvenv.cfg
 query_utilities.py
 bin/
 include/
 lib/
 __pycache__/
-chromedriver
-scrapedJobs.txt
+scraped_jobs.txt
+ARCHIVE
 
 
 # Not yet implemented
-diceJobBoardScraper.py
-diceIndividualJobScraper.py
-pythonJobsHQJobBoardScraper.py
-pythonJobsHQIndividualJobScraper.py
+dice_job_board_scraper.py
+dice_individual_job_scraper.py
+pythonjobshq_job_board_scraper.py
+pythonJobsHQIndividualjob_scraper.py

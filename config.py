@@ -8,7 +8,7 @@ URLs = [
 # "https://www.linkedin.com/jobs/search/?f_E=1%2C2%2C3&f_LF=f_AL&f_TPR=r604800&geoId=103644278&keywords=python%20developer%20-senior%20-sr%20-mid-senior&location=United%20States",
 
 # Customize the following terms and scores where positive traits correlate with positive numbers and negative with negative numbers.  The job listings will be "scored" and the 10 best will be e-mailed to you.
-searchPhrases = {
+search_phrases = {
     "Entry level": 50,
     "Flask": 25,
     "Junior": 25,

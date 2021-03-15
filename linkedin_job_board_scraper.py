@@ -3,12 +3,13 @@ from bs4 import BeautifulSoup
 from time import sleep
 from random import randint
 from typing import Tuple, Dict, List
-from linkedInIndividualJobScraper import linkedInIndividualJobScraper
+from linkedin_individual_job_scraper import linkedin_individual_job_scraper
 
 
-def linkedInMetaSearch(
-    URL: str, jobs: dict, scrapedJobs: list
+def linkedin_meta_search(
+    URL: str, jobs: dict, scraped_jobs: list
 ) -> Tuple[Dict[int, str], List[str]]:
+    """Does a meta search of the job board, reaches out to individual job scraper and returns job details"""
 
     headers = {
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:73.0) Gecko/20100101 Firefox/73.0"
@@ -22,10 +23,10 @@ def linkedInMetaSearch(
     for listing in listings:
 
         id = "li_" + listing.get("data-id")
-        if id in scrapedJobs:
+        if id in scraped_jobs:
             break
         else:
-            scrapedJobs.insert(0, id)
+            scraped_jobs.insert(0, id)
 
         score = 1000
 
@@ -41,16 +42,16 @@ def linkedInMetaSearch(
 
         link = listing.find("a").get("href")
 
-        datePosted = listing.find("time").get("datetime")
+        date_posted = listing.find("time").get("datetime")
 
         location = listing.find("span", class_="job-result-card__location").contents[0]
 
         print(f"Scraping {title} at {company}")
 
-        fullText = linkedInIndividualJobScraper(link)
+        full_text = linkedin_individual_job_scraper(link)
 
         sleep(randint(1, 10))
 
-        jobs[id] = [score, link, title, company, datePosted, location, fullText]
+        jobs[id] = [score, link, title, company, date_posted, location, full_text]
 
-    return jobs, scrapedJobs
+    return jobs, scraped_jobs
