@@ -151,17 +151,20 @@ def send_email(jobs):
     subject = f"Job Scraper Results"
 
     if jobs != "Not working":
-        body = ""
+        body = []
         job_ids = [
             jobs[x] for x in sorted(jobs.keys(), key=lambda x: jobs[x][0], reverse=True)
         ][:25]
         for jobID in job_ids:
             score, link, title, company, date_posted, location, full_text = jobID
-            body += f"({score}) {title} at {company} in {location} posted \
-                {date_posted[5:11]}\n{link}\n... {full_text[100:500]} ...\n\n\n"
+            body.append(
+                f"({score}) {title} at {company} in {location} posted \
+                {date_posted[5:11]}\n{link}\n... {full_text[100:500]} ..."
+            )
         if len(body) == 0:
-            body += "\nNo results."
-        body = body.encode("ascii", "ignore").decode("ascii")  # last working
+            body = body + ("\nNo results.")
+        body = "\n\n\n".join(body)
+        body = body.encode("utf-8")
         msg = f"Subject: {subject}\n\n{body}"
     else:
         msg = f"Subject: {subject} - {jobs}\n\n{jobs}"

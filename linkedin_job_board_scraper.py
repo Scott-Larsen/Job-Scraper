@@ -9,7 +9,12 @@ from linkedin_individual_job_scraper import linkedin_individual_job_scraper
 def linkedin_meta_search(
     URL: str, jobs: dict, scraped_jobs: list
 ) -> Tuple[Dict[int, str], List[str]]:
-    """Does a meta search of the job board, reaches out to individual job scraper and returns job details"""
+    """Searches LinkedIn for jobs
+    
+    Keyword arguments: None
+    Return: Does a meta search of the job board, reaches out to the individual 
+    job scraper and returns job details
+    """
 
     headers = {
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:73.0) Gecko/20100101 Firefox/73.0"
