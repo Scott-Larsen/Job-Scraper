@@ -16,12 +16,14 @@ def linkedin_individual_job_scraper(link: str) -> str:
 
     try:
         full_text = soup.find("div", class_="show-more-less-html__markup").get_text()
+    except AttributeError:
+        full_text = f"{link} has no job description\n"
 
-        if soup.find("figcaption", class_="closed-job__flavor--closed"):
-            full_text = "No longer accepting applications " + full_text
+    if soup.find("figcaption", class_="closed-job__flavor--closed"):
+        full_text = "No longer accepting applications " + full_text
 
-    except AttributeError as e:
-        print(f"\n{e}: {link} has no job description\n")
+    # except AttributeError as e:
+    #     print(f"\n{e}: {link} has no job description\n")
 
     sleep(randint(1, 10))
 

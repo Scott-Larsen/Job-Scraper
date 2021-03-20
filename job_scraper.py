@@ -164,7 +164,7 @@ def send_email(jobs):
         if len(body) == 0:
             body = body + ("\nNo results.")
         body = "\n\n\n".join(body)
-        body = body.encode("utf-8")
+        body = body.encode("ascii", "ignore").decode("ascii")
         msg = f"Subject: {subject}\n\n{body}"
     else:
         msg = f"Subject: {subject} - {jobs}\n\n{jobs}"
